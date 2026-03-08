@@ -1,0 +1,21 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import './styles/variables.css';
+import './styles/global.css';
+import './styles/animations.css';
+import './styles/widget.css';
+import { initGoogleAnalytics, registerServiceWorker } from './utils/analytics';
+
+// Initialize analytics and SW
+initGoogleAnalytics();
+registerServiceWorker();
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
