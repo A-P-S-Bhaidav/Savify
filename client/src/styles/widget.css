@@ -18,7 +18,7 @@
         0 4px 20px rgba(16, 185, 129, 0.4),
         0 0 0 3px rgba(16, 185, 129, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    transition: box-shadow 0.3s ease, background 0.5s ease;
+    transition: box-shadow 0.3s ease, background 0.5s ease, transform 0.3s ease;
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
@@ -35,6 +35,7 @@
         0 4px 20px rgba(239, 68, 68, 0.4),
         0 0 0 3px rgba(239, 68, 68, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transform: rotate(0deg);
 }
 
 .widget-fab-logo {
@@ -44,25 +45,6 @@
     object-fit: contain;
     pointer-events: none;
     filter: brightness(1.1);
-}
-
-/* Glassmorphism shimmer on hover */
-.widget-fab::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 50%;
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.3) 0%,
-            rgba(255, 255, 255, 0) 50%,
-            rgba(255, 255, 255, 0.15) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.widget-fab:hover::after {
-    opacity: 1;
 }
 
 /* Pulse ring animation on idle */
@@ -78,11 +60,7 @@
 
 .widget-fab.expanded::before {
     border-color: rgba(239, 68, 68, 0.3);
-}
-
-.widget-fab.dragging::before {
     animation: none;
-    opacity: 0;
 }
 
 @keyframes widgetPulse {
@@ -99,202 +77,79 @@
     }
 }
 
-/* ===== MAGNETIC SNAP ANIMATION ===== */
-.widget-fab.snapping {
-    transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-        top 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+/* ===== BACKDROP ===== */
+.widget-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 }
 
-.widget-fab.dragging {
-    transition: none !important;
-    box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.2),
-        0 0 0 4px rgba(16, 185, 129, 0.2);
-    transform: scale(1.1);
-}
-
-.widget-fab.expanded.dragging {
-    box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.2),
-        0 0 0 4px rgba(239, 68, 68, 0.2);
-}
-
-/* ===== RADIAL CATEGORY BUTTONS ===== */
-.widget-radial-menu {
+/* ===== CATEGORY BUTTONS ===== */
+.widget-cat-btn {
     position: fixed;
     z-index: 99999;
-    pointer-events: none;
-    inset: 0;
-}
-
-.widget-radial-menu.open {
-    pointer-events: none;
-    /* Let clicks pass through empty space */
-}
-
-/* Let the buttons themselves capture clicks */
-.widget-radial-menu.open .widget-category-btn {
-    pointer-events: auto;
-}
-
-.widget-category-btn {
-    position: absolute;
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: white;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.95) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow:
-        0 4px 15px rgba(16, 185, 129, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-    transform: scale(0) translate(0, 0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    /* HIDDEN by default */
+    transform: scale(0);
     opacity: 0;
-    transition:
-        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-        opacity 0.3s ease,
-        background 0.3s ease,
-        box-shadow 0.3s ease,
-        width 0.2s ease,
-        height 0.2s ease,
-        font-size 0.2s ease;
     pointer-events: none;
+    transition:
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.25s ease;
     outline: none;
 }
 
-/* Glass shine overlay */
-.widget-category-btn::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 15%;
-    right: 15%;
-    height: 40%;
-    border-radius: 50%;
-    background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.4) 0%,
-            rgba(255, 255, 255, 0) 100%);
-    pointer-events: none;
-}
-
-.widget-radial-menu.open .widget-category-btn {
+/* VISIBLE when menu is open */
+.widget-cat-btn.visible {
+    transform: scale(1);
     opacity: 1;
     pointer-events: auto;
 }
 
-/* Staggered entrance for each button */
-.widget-radial-menu.open .widget-category-btn:nth-child(1) {
-    transition-delay: 0ms;
+.widget-cat-btn:hover {
+    transform: scale(1.2) !important;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.35);
 }
 
-.widget-radial-menu.open .widget-category-btn:nth-child(2) {
-    transition-delay: 40ms;
-}
-
-.widget-radial-menu.open .widget-category-btn:nth-child(3) {
-    transition-delay: 80ms;
-}
-
-.widget-radial-menu.open .widget-category-btn:nth-child(4) {
-    transition-delay: 120ms;
-}
-
-.widget-radial-menu.open .widget-category-btn:nth-child(5) {
-    transition-delay: 160ms;
-}
-
-.widget-radial-menu.open .widget-category-btn:nth-child(6) {
-    transition-delay: 200ms;
-}
-
-/* Closing stagger reversed */
-.widget-radial-menu:not(.open) .widget-category-btn:nth-child(6) {
-    transition-delay: 0ms;
-}
-
-.widget-radial-menu:not(.open) .widget-category-btn:nth-child(5) {
-    transition-delay: 40ms;
-}
-
-.widget-radial-menu:not(.open) .widget-category-btn:nth-child(4) {
-    transition-delay: 80ms;
-}
-
-.widget-radial-menu:not(.open) .widget-category-btn:nth-child(3) {
-    transition-delay: 120ms;
-}
-
-.widget-radial-menu:not(.open) .widget-category-btn:nth-child(2) {
-    transition-delay: 160ms;
-}
-
-.widget-radial-menu:not(.open) .widget-category-btn:nth-child(1) {
-    transition-delay: 200ms;
-}
-
-/* Hover / proximity highlight → golden yellow */
-.widget-category-btn.hovered {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(218, 165, 32, 1) 100%);
-    box-shadow:
-        0 4px 20px rgba(212, 175, 55, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-}
-
-/* Clicked state: half green half yellow + Savify logo */
-.widget-category-btn.clicked {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(212, 175, 55, 1) 100%);
-    box-shadow:
-        0 6px 25px rgba(212, 175, 55, 0.4),
-        0 0 0 3px rgba(16, 185, 129, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    animation: widgetBtnPop 0.3s ease;
-}
-
-@keyframes widgetBtnPop {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.2);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+.widget-cat-btn:active {
+    transform: scale(0.95) !important;
 }
 
 /* Category label tooltip */
-.widget-category-label {
+.widget-cat-label {
     position: absolute;
-    bottom: -22px;
+    bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 700;
-    color: var(--color-obsidian);
+    color: #333;
     white-space: nowrap;
     opacity: 0;
-    transition: opacity 0.2s ease;
     pointer-events: none;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     padding: 2px 6px;
     border-radius: 4px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.2s ease;
 }
 
-.widget-category-btn.hovered .widget-category-label {
+.widget-cat-btn:hover .widget-cat-label {
     opacity: 1;
 }
 
@@ -302,7 +157,7 @@
 .widget-popup-overlay {
     position: fixed;
     inset: 0;
-    z-index: 10000;
+    z-index: 200000;
     background: rgba(0, 0, 0, 0.35);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -476,24 +331,6 @@
     overflow: hidden;
 }
 
-.widget-popup-add-btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-            transparent,
-            rgba(255, 255, 255, 0.2),
-            transparent);
-    transition: left 0.5s ease;
-}
-
-.widget-popup-add-btn:hover::after {
-    left: 100%;
-}
-
 .widget-popup-add-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
@@ -509,31 +346,11 @@
     transform: none;
 }
 
-/* Success animation */
 .widget-popup-add-btn.success {
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    animation: widgetSuccessPulse 0.5s ease;
 }
 
-@keyframes widgetSuccessPulse {
-    0% {
-        transform: scale(1);
-    }
-
-    30% {
-        transform: scale(0.95);
-    }
-
-    60% {
-        transform: scale(1.03);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* ===== WIDGET TOGGLE CARD ===== */
+/* ===== WIDGET TOGGLE CARD (settings) ===== */
 .widget-toggle-card {
     display: flex;
     align-items: center;
@@ -640,10 +457,10 @@
         height: 28px;
     }
 
-    .widget-category-btn {
-        width: 42px;
-        height: 42px;
-        font-size: 1rem;
+    .widget-cat-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
     }
 
     .widget-popup {
