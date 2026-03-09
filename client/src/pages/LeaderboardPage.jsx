@@ -11,7 +11,7 @@ export default function LeaderboardPage() {
             <div className="landing-nav-links">
               <a href="/features">Features</a>
               <a href="/pricing">Pricing</a>
-              <a href="/login" className="landing-cta-btn">Get Started</a>
+              <a href="https://savifyappnewtrial.vercel.app" className="landing-cta-btn">Get Started</a>
             </div>
           </div>
         </div>

@@ -348,7 +348,7 @@ export default function DashboardPage() {
                             currentSpending={currentSpending}
                             avatarUrl={avatarUrl}
                             onEdit={() => openModal('edit')}
-                            onLogout={async () => { await signOut(); navigate('/login'); }}
+                            onLogout={async () => { await signOut(); window.location.href="https://savifyappnewtrial.vercel.app"; }}
                         />
                     </div>
 
