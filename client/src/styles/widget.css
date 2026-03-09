@@ -18,7 +18,7 @@
         0 4px 20px rgba(16, 185, 129, 0.4),
         0 0 0 3px rgba(16, 185, 129, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    transition: box-shadow 0.3s ease, background 0.5s ease, transform 0.3s ease;
+    transition: box-shadow 0.3s ease, background 0.3s ease;
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
@@ -35,7 +35,6 @@
         0 4px 20px rgba(239, 68, 68, 0.4),
         0 0 0 3px rgba(239, 68, 68, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    transform: rotate(0deg);
 }
 
 .widget-fab-logo {
@@ -47,7 +46,7 @@
     filter: brightness(1.1);
 }
 
-/* Pulse ring animation on idle */
+/* Pulse ring */
 .widget-fab::before {
     content: '';
     position: absolute;
@@ -59,8 +58,8 @@
 }
 
 .widget-fab.expanded::before {
-    border-color: rgba(239, 68, 68, 0.3);
     animation: none;
+    opacity: 0;
 }
 
 @keyframes widgetPulse {
@@ -82,56 +81,61 @@
     position: fixed;
     inset: 0;
     z-index: 99998;
-    background: rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.12);
+}
+
+/* ===== CATEGORY BUTTON WRAPPER ===== */
+.widget-cat-btn-wrapper {
+    animation: catBtnPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes catBtnPopIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* ===== CATEGORY BUTTONS ===== */
-.widget-cat-btn {
-    position: fixed;
-    z-index: 99999;
+.widget-cat-btn-inner {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: none;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1rem;
     color: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-    /* HIDDEN by default */
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-        opacity 0.25s ease;
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     outline: none;
+    padding: 0;
 }
 
-/* VISIBLE when menu is open */
-.widget-cat-btn.visible {
-    transform: scale(1);
-    opacity: 1;
-    pointer-events: auto;
+.widget-cat-btn-inner:hover {
+    transform: scale(1.2);
+    box-shadow:
+        0 6px 25px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.widget-cat-btn:hover {
-    transform: scale(1.2) !important;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.35);
+.widget-cat-btn-inner:active {
+    transform: scale(0.9);
 }
 
-.widget-cat-btn:active {
-    transform: scale(0.95) !important;
-}
-
-/* Category label tooltip */
+/* Category label */
 .widget-cat-label {
     position: absolute;
-    bottom: -20px;
+    bottom: -18px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.55rem;
@@ -149,7 +153,7 @@
     transition: opacity 0.2s ease;
 }
 
-.widget-cat-btn:hover .widget-cat-label {
+.widget-cat-btn-wrapper:hover .widget-cat-label {
     opacity: 1;
 }
 
@@ -323,9 +327,7 @@
     cursor: pointer;
     color: white;
     background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    box-shadow:
-        0 4px 15px rgba(16, 185, 129, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -350,7 +352,7 @@
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
-/* ===== WIDGET TOGGLE CARD (settings) ===== */
+/* ===== WIDGET TOGGLE CARD ===== */
 .widget-toggle-card {
     display: flex;
     align-items: center;
@@ -400,7 +402,6 @@
     margin: 0;
 }
 
-/* Toggle switch */
 .widget-toggle-switch {
     position: relative;
     width: 48px;
@@ -457,7 +458,7 @@
         height: 28px;
     }
 
-    .widget-cat-btn {
+    .widget-cat-btn-inner {
         width: 40px;
         height: 40px;
         font-size: 0.9rem;
