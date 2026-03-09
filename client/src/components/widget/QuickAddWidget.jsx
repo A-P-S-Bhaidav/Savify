@@ -143,9 +143,10 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     const isLeftSide = pos.x < window.innerWidth / 2;
 
     const getButtonPositions = () => {
+        // Left side: -90 (top) to 90 (bottom). Right side: 90 (bottom) to 270 (top)
         const startAngle = isLeftSide ? -90 : 90;
         const sweep = 180;
-        const direction = isLeftSide ? 1 : -1;
+        const direction = 1;
 
         return CATEGORIES.map((_, idx) => {
             const angleDeg = startAngle + direction * (sweep / (CATEGORIES.length - 1)) * idx;
