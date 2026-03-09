@@ -14,7 +14,7 @@ export default function PricingPage() {
                             <a href="/features">Features</a>
                             <a href="/pricing">Pricing</a>
                             <a href="/about">About</a>
-                            <a href="https://savifyappnewtrial.vercel.app" className="landing-cta-btn">Get Started</a>
+                            <a href="https://savifytrial-xi.vercel.app" className="landing-cta-btn">Get Started</a>
                         </div>
                     </div>
                 </div>
@@ -40,7 +40,7 @@ export default function PricingPage() {
                             <li style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 12, color: '#718096' }}><i className="fas fa-check" style={{ color: '#10B981' }}></i> Manual Habit Logging</li>
                             <li style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 12, color: '#718096' }}><i className="fas fa-check" style={{ color: '#10B981' }}></i> Community Challenges</li>
                         </ul>
-                        <a href="https://savifyappnewtrial.vercel.app" style={{ display: 'block', width: '100%', padding: '1.2rem', borderRadius: 50, textDecoration: 'none', fontWeight: 700, textAlign: 'center', background: '#FAFAF9', color: '#0A0A0A', border: '1px solid rgba(0,0,0,0.05)' }}>Get Started</a>
+                        <a href="https://savifytrial-xi.vercel.app" style={{ display: 'block', width: '100%', padding: '1.2rem', borderRadius: 50, textDecoration: 'none', fontWeight: 700, textAlign: 'center', background: '#FAFAF9', color: '#0A0A0A', border: '1px solid rgba(0,0,0,0.05)' }}>Get Started</a>
                     </div>
 
                     <div style={{ background: 'white', borderRadius: 24, padding: '4rem 3rem', boxShadow: '0 10px 30px rgba(0,0,0,0.03)', border: '2px solid #C5A059', transform: 'scale(1.02)', textAlign: 'center', position: 'relative' }}>
@@ -54,7 +54,7 @@ export default function PricingPage() {
                             <li style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 12, color: '#718096' }}><i className="fas fa-check" style={{ color: '#10B981' }}></i> Verified Status Certificates</li>
                             <li style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 12, color: '#718096' }}><i className="fas fa-check" style={{ color: '#10B981' }}></i> Advanced Necessity Analytics</li>
                         </ul>
-                        <a href="https://savifyappnewtrial.vercel.app" style={{ display: 'block', width: '100%', padding: '1.2rem', borderRadius: 50, textDecoration: 'none', fontWeight: 700, textAlign: 'center', background: '#10B981', color: 'white', boxShadow: '0 5px 15px rgba(0, 155, 119, 0.3)' }}>Upgrade to Pro</a>
+                        <a href="https://savifytrial-xi.vercel.app" style={{ display: 'block', width: '100%', padding: '1.2rem', borderRadius: 50, textDecoration: 'none', fontWeight: 700, textAlign: 'center', background: '#10B981', color: 'white', boxShadow: '0 5px 15px rgba(0, 155, 119, 0.3)' }}>Upgrade to Pro</a>
                     </div>
                 </div>
             </div>
