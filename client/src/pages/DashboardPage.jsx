@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useExpenses } from '../hooks/useExpenses';
 import { useRealtime } from '../hooks/useRealtime';
@@ -28,7 +28,6 @@ import '../styles/dashboard.css';
 
 export default function DashboardPage() {
     const { user, signOut } = useAuth();
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     // App state
@@ -348,7 +347,7 @@ export default function DashboardPage() {
                             currentSpending={currentSpending}
                             avatarUrl={avatarUrl}
                             onEdit={() => openModal('edit')}
-                            onLogout={async () => { await signOut(); window.location.href="https://savifyappnewtrial.vercel.app"; }}
+                            onLogout={async () => { await signOut(); window.location.href = "https://savifyappnewtrial.vercel.app"; }}
                         />
                     </div>
 

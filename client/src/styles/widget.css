@@ -3,7 +3,7 @@
 /* Main floating button */
 .widget-fab {
     position: fixed;
-    z-index: 9999;
+    z-index: 100000;
     width: 56px;
     height: 56px;
     border-radius: 50%;
@@ -122,11 +122,18 @@
 /* ===== RADIAL CATEGORY BUTTONS ===== */
 .widget-radial-menu {
     position: fixed;
-    z-index: 9998;
+    z-index: 99999;
     pointer-events: none;
+    inset: 0;
 }
 
 .widget-radial-menu.open {
+    pointer-events: none;
+    /* Let clicks pass through empty space */
+}
+
+/* Let the buttons themselves capture clicks */
+.widget-radial-menu.open .widget-category-btn {
     pointer-events: auto;
 }
 
