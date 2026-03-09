@@ -14,7 +14,7 @@ export default function LandingPage() {
                             <a href="/features">Features</a>
                             <a href="/pricing">Pricing</a>
                             <a href="/about">About</a>
-                            <a href="https://savifytrial-xi.vercel.app" className="landing-cta-btn">Get Started</a>
+                            <a href="/login" className="landing-cta-btn">Get Started</a>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@ export default function LandingPage() {
                     <h1 className="hero-title">Master Your <span className="gradient-text">Financial Balance</span></h1>
                     <p className="hero-subtitle">Track spending, compete with peers, and build discipline. Your Balance Score tells the real story.</p>
                     <div className="hero-actions">
-                        <a href="https://savifytrial-xi.vercel.app" className="hero-primary-btn">Start Free <i className="fas fa-arrow-right"></i></a>
+                        <a href="/login" className="hero-primary-btn">Start Free <i className="fas fa-arrow-right"></i></a>
                         <a href="/features" className="hero-secondary-btn">How It Works</a>
                     </div>
                     <div className="hero-stats">
@@ -83,7 +83,7 @@ export default function LandingPage() {
                     <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '2rem', maxWidth: 500, margin: '0 auto 2rem' }}>
                         Join hundreds of IIT KGP students already mastering their finances.
                     </p>
-                    <a href="https://savifytrial-xi.vercel.app" className="hero-primary-btn" style={{ display: 'inline-flex' }}>
+                    <a href="/login" className="hero-primary-btn" style={{ display: 'inline-flex' }}>
                         Get Started Free <i className="fas fa-arrow-right" style={{ marginLeft: 8 }}></i>
                     </a>
                 </div>
