@@ -64,7 +64,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
 
     // Pointer drag handlers
     const handlePointerDown = useCallback((e) => {
-        e.preventDefault();
+        // Removed e.preventDefault() as CSS handles touch-action, and this prevents onClick
         setDragging(true);
         wasDragged.current = false;
         const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -79,7 +79,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
         const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
         const dx = clientX - dragStartPos.current.x;
         const dy = clientY - dragStartPos.current.y;
-        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
             wasDragged.current = true;
         }
         setPos({ x: clientX - dragOffset.current.x, y: clientY - dragOffset.current.y });
@@ -89,7 +89,17 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
         if (!dragging) return;
         setDragging(false);
         snapToEdge(pos.x, pos.y);
-    }, [dragging, pos, snapToEdge]);
+
+        // Handle click explicitly if it wasn't dragged
+        if (!wasDragged.current) {
+            if (expanded) {
+                setExpanded(false);
+                setClickedIdx(null);
+            } else {
+                setExpanded(true);
+            }
+        }
+    }, [dragging, pos, snapToEdge, expanded]);
 
     useEffect(() => {
         if (dragging) {
@@ -126,14 +136,9 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     }, [expanded, handleMenuMouseMove]);
 
     // Toggle menu
-    const handleFabClick = () => {
-        if (wasDragged.current) return;
-        if (expanded) {
-            setExpanded(false);
-            setClickedIdx(null);
-        } else {
-            setExpanded(true);
-        }
+    const handleFabClick = (e) => {
+        // Let handlePointerUp manage the toggle logic for more robust mobile support
+        e.preventDefault();
     };
 
     // Calculate button positions (semi-circle on the side away from edge)
