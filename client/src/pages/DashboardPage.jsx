@@ -5,7 +5,7 @@ import { useExpenses } from '../hooks/useExpenses';
 import { useRealtime } from '../hooks/useRealtime';
 import { useFriends } from '../hooks/useFriends';
 import { supabase } from '../config/supabase';
-import { parseCurrency, getTierFromScore, getFlirtyComment, chartColors, APP_START_DATE } from '../utils/helpers';
+import { parseCurrency, getTierFromScore, getFlirtyComment, APP_START_DATE } from '../utils/helpers';
 import { flirtDb } from '../utils/flirtDb';
 import { hallIdentities } from '../utils/hallIdentities';
 import Sidebar from '../components/layout/Sidebar';
@@ -63,7 +63,7 @@ export default function DashboardPage() {
     const [pendingExpense, setPendingExpense] = useState(null);
 
     // Hooks
-    const { expenses, history, fetchExpenses, fetchHistory, addExpense, getFilteredExpenses, calculateStreak } = useExpenses(user?.id);
+    const { expenses, history, fetchExpenses, fetchHistory, addExpense, calculateStreak } = useExpenses(user?.id);
     const { friends, loading: friendsLoading, hasMore, fetchFriends } = useFriends(user?.id);
 
     // Swipe navigation
@@ -102,7 +102,7 @@ export default function DashboardPage() {
             });
             if (error) throw error;
             return data.comment || "Spicy comment loaded.";
-        } catch (err) {
+        } catch {
             const ratio = budget > 0 ? (totalSpent / budget) : 0;
             return getFlirtyComment(category, amount, ratio, flirtDb);
         }
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                             hallIdentities={hallIdentities}
                             onAddExpense={() => openModal('expense')}
                             onOpenInvite={() => openModal('invite')}
-                            onOpenEdit={(field) => openModal('edit')}
+                            onOpenEdit={() => openModal('edit')}
                             onOpenHowItWorks={() => openModal('howItWorks')}
                             onLoadMoreFriends={() => appData?.college && fetchFriends(appData.college, true)}
                             user={user}
@@ -383,7 +383,7 @@ export default function DashboardPage() {
 
             {/* Swipe dots */}
             <div className="swipe-dots">
-                {tabs.map((tab, i) => (
+                {tabs.map((tab) => (
                     <div key={tab} className={`dot ${activeTab === tab ? 'active' : ''}`}></div>
                 ))}
             </div>

@@ -5,7 +5,7 @@ import { APP_START_DATE } from '../utils/helpers';
 export function useExpenses(userId) {
     const [expenses, setExpenses] = useState([]);
     const [history, setHistory] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
 
     const fetchExpenses = useCallback(async () => {
         if (!userId) return [];

@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 
 export default function Header({ appData, onHelp, onAddExpense }) {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
-    const [isInstalled, setIsInstalled] = useState(false);
+    const [isInstalled, setIsInstalled] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        }
+        return false;
+    });
 
     useEffect(() => {
         const handler = (e) => { e.preventDefault(); setDeferredPrompt(e); };
         window.addEventListener('beforeinstallprompt', handler);
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-            setIsInstalled(true);
-        }
         return () => window.removeEventListener('beforeinstallprompt', handler);
     }, []);
 

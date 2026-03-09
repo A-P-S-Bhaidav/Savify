@@ -1,10 +1,10 @@
 import { getCategoryIcon } from '../../utils/helpers';
 
 export default function OverviewTab({
-    balanceScore, currentRank, tier, currentBudget, currentSpending,
+    balanceScore, currentRank, currentBudget,
     remaining, budgetPct, streak, aiComment, history, friends,
     friendsLoading, hasMoreFriends, appData,
-    onAddExpense, onOpenInvite, onOpenEdit, onLoadMoreFriends, user,
+    onOpenInvite, onOpenEdit, onLoadMoreFriends,
     widgetEnabled, onToggleWidget
 }) {
     const isOverBudget = budgetPct > 100;

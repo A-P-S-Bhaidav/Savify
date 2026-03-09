@@ -14,7 +14,7 @@ export default function AnalysisTab({ expenses, currentBudget }) {
         return (expenses || []).filter(exp => new Date(exp.created_at) >= APP_START_DATE);
     }, [expenses]);
 
-    const { catTotals, totalSpent, pieLabels, pieData } = useMemo(() => {
+    const { totalSpent, pieLabels, pieData } = useMemo(() => {
         const catTotals = {};
         let totalSpent = 0;
         filteredExpenses.forEach(exp => {
@@ -43,7 +43,7 @@ export default function AnalysisTab({ expenses, currentBudget }) {
         }
         filteredExpenses.forEach(exp => {
             const dateStr = new Date(exp.created_at).toISOString().split('T')[0];
-            if (dailyTotals.hasOwnProperty(dateStr)) dailyTotals[dateStr] += exp.amount;
+            if (Object.prototype.hasOwnProperty.call(dailyTotals, dateStr)) dailyTotals[dateStr] += exp.amount;
         });
         return { dayLabels, dailyData: last7Days.map(d => dailyTotals[d]) };
     }, [filteredExpenses]);
