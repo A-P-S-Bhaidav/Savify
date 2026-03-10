@@ -1,67 +1,83 @@
-/* ===== CSS VARIABLES & THEME ===== */
+/* ===== CSS VARIABLES & PREMIUM THEME ===== */
 :root {
   /* Dashboard Theme (Light Green & White) */
-  --color-obsidian: #0A0A0A;
+  --color-obsidian: #050505;
+  --color-obsidian-light: #121212;
+  --color-emerald: #0ea5e9;
+  /* Changed to an ultra-modern cyan/blue instead of flat green for a premium SaaS feel, but let's stick to Emerald for brand consistency */
   --color-emerald: #10B981;
+  --color-emerald-deep: #059669;
   --color-emerald-light: rgba(16, 185, 129, 0.1);
   --color-gold: #D4AF37;
-  --color-ivory: #FAFAF9;
-  --color-stone: #78716C;
-  --color-border: rgba(229, 229, 229, 0.8);
+  --color-ivory: #ffffff;
+  --color-stone: #64748b;
+  --color-border: rgba(0, 0, 0, 0.06);
   --color-fire: #FF5722;
+  --color-rose: #f43f5e;
+  --color-bg-base: #f8fafc;
 
-  --font-primary: 'Inter', sans-serif;
+  /* Fonts */
+  --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
   --font-secondary: 'Playfair Display', serif;
-  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.05);
-  --radius-lg: 24px;
 
-  /* Landing Page Extended */
-  --color-charcoal: #161616;
-  --color-graphite: #222222;
-  --color-slate: #2D3748;
-  --gradient-obsidian: linear-gradient(135deg, #0A0A0A 0%, #161616 50%, #0A0A0A 100%);
-  --gradient-emerald: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  --gradient-gold: linear-gradient(135deg, #FFD700 0%, #DAA520 100%);
-  --gradient-bronze: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
-  --gradient-silver: linear-gradient(135deg, #C0C0C0 0%, #808080 100%);
-  --gradient-platinum: linear-gradient(135deg, #ffffff 0%, #d7d7d7 50%, #ffffff 100%);
+  /* Typography Fluid Scaling */
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.8rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 0.95rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3.5rem);
 
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 48px;
+  /* Spacing Fluid Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: clamp(1.5rem, 1vw + 1rem, 2rem);
+  --space-xl: clamp(2rem, 2vw + 1.5rem, 3rem);
+  --space-2xl: clamp(3rem, 4vw + 2rem, 5rem);
 
-  /* Typography */
-  --font-weight-light: 300;
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  --font-weight-black: 900;
+  /* Premium Easing Curves */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-fluid: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 150ms var(--ease-fluid);
+  --transition-smooth: 300ms var(--ease-out-expo);
+  --transition-slow: 500ms var(--ease-out-expo);
+  --transition-bounce: 400ms var(--ease-elastic);
 
-  /* Shadows */
-  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-large: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  /* Premium Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  --shadow-emerald: 0 8px 20px -6px rgba(16, 185, 129, 0.4);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
 
-  /* Glass */
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  /* Glassmorphism Layers */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg-dark: rgba(10, 10, 10, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-border-dark: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(16px);
+  --glass-blur-heavy: blur(24px);
 
-  /* Login Page Colors */
-  --color-bg: #0A0A0A;
-  --color-primary: #10B981;
-  --color-secondary: #D4AF37;
-  --color-text: #FAFAFA;
-  --color-text-light: rgba(255, 255, 255, 0.5);
-  --radius-md: 16px;
-  --transition-magic: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 9999px;
+
+  /* Z-Index Layers */
+  --z-negative: -1;
+  --z-elevate: 10;
+  --z-sticky: 100;
+  --z-drawer: 200;
+  --z-modal: 1000;
+  --z-popover: 2000;
+  --z-toast: 3000;
 }

@@ -19,13 +19,18 @@ body {
     font-family: var(--font-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     overflow-x: hidden;
+    background-color: var(--color-bg-base);
+    color: var(--color-obsidian);
 }
 
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
     font-weight: var(--font-weight-bold);
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -35,29 +40,69 @@ h4 {
 a {
     text-decoration: none;
     color: inherit;
+    transition: color var(--transition-fast);
 }
 
 button {
     font-family: var(--font-primary);
+    cursor: pointer;
+    border: none;
+    background: transparent;
 }
 
 img {
     max-width: 100%;
     height: auto;
+    display: block;
 }
 
-/* Scrollbar */
+/* Premium Custom Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
-    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Global Selection */
+::selection {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--color-emerald-deep);
+}
+
+/* Utility Classes */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.glass-panel-dark {
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur-heavy);
+    -webkit-backdrop-filter: var(--glass-blur-heavy);
+    border: 1px solid var(--glass-border-dark);
+    box-shadow: var(--shadow-lg);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--color-emerald) 0%, var(--color-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* Accessibility */
@@ -69,5 +114,6 @@ img {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

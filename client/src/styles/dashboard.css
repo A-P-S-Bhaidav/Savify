@@ -33,16 +33,20 @@
 .app-layout {
     display: flex;
     min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .sidebar {
     width: 280px;
-    background: white;
-    border-right: 1px solid var(--color-border);
-    padding: 2rem;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur-heavy);
+    -webkit-backdrop-filter: var(--glass-blur-heavy);
+    border-right: 1px solid var(--glass-border);
+    padding: var(--space-xl) var(--space-lg);
     position: fixed;
     height: 100vh;
-    z-index: 10;
+    z-index: var(--z-sticky);
     display: flex;
     flex-direction: column;
 }
@@ -50,11 +54,12 @@
 .main-content {
     margin-left: 280px;
     flex: 1;
-    padding: 3rem;
+    padding: var(--space-2xl) var(--space-xl);
     position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 100vw;
 }
 
 .logo {
@@ -257,7 +262,7 @@
 /* SECTIONS & ANIMATIONS */
 .dashboard-section {
     display: none;
-    animation: fadeIn 0.4s ease-out;
+    animation: slideUpFade var(--transition-slow) backwards;
     flex: 1;
     width: 100%;
 }
@@ -274,18 +279,44 @@
 
 /* STANDARD CARDS */
 .card {
-    background: white;
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
-    border: 1px solid rgba(0, 0, 0, 0.02);
-    transition: 0.3s;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    padding: var(--space-lg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--glass-border);
+    transition: transform var(--transition-bounce), box-shadow var(--transition-smooth);
     position: relative;
     z-index: 1;
+    animation: slideUpFade 0.6s var(--ease-out-expo) backwards;
+}
+
+/* Stagger Grid Cards */
+.card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.card:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.card:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.card:nth-child(5) {
+    animation-delay: 0.25s;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+    z-index: var(--z-elevate);
 }
 
 .card h3 {
@@ -1081,11 +1112,15 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
-    border-top: 1px solid var(--color-border);
-    z-index: 100;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur-heavy);
+    -webkit-backdrop-filter: var(--glass-blur-heavy);
+    border-top: 1px solid var(--glass-border);
+    z-index: var(--z-sticky);
     justify-content: space-around;
-    padding: 0.5rem 0;
+    padding: var(--space-sm) var(--space-md);
+    padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 10px));
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.05);
 }
 
 .nav-item {
@@ -1093,11 +1128,17 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    padding: 0.5rem 1rem;
+    padding: var(--space-sm) var(--space-md);
     color: var(--color-stone);
     cursor: pointer;
-    transition: 0.2s;
-    font-size: 0.7rem;
+    transition: transform var(--transition-bounce), color var(--transition-fast);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-lg);
+}
+
+.nav-item:active {
+    transform: scale(0.9);
 }
 
 .nav-item.active {
@@ -1105,27 +1146,37 @@
 }
 
 .nav-item i {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    transition: transform var(--transition-bounce);
+}
+
+.nav-item.active i {
+    transform: translateY(-2px);
 }
 
 /* MOBILE FAB */
 .mobile-fab {
     display: none;
     position: fixed;
-    bottom: 80px;
-    right: 20px;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    right: var(--space-lg);
     background: var(--color-emerald);
     color: white;
     border: none;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     width: 60px;
     height: 60px;
     font-size: 1.5rem;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-    z-index: 99;
+    box-shadow: var(--shadow-emerald);
+    z-index: var(--z-elevate);
     align-items: center;
     justify-content: center;
+    transition: transform var(--transition-bounce), box-shadow var(--transition-smooth);
+}
+
+.mobile-fab:active {
+    transform: scale(0.9);
 }
 
 .mobile-fab span {
@@ -1420,15 +1471,10 @@
         display: none !important;
     }
 
-    .main-content {
-        margin-left: 0;
-        padding: 1.5rem;
-        padding-bottom: 120px;
-    }
-
     .mobile-bottom-nav {
         display: flex;
     }
+
 
     .mobile-fab {
         display: flex;
