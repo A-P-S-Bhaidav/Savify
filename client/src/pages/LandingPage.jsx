@@ -1,7 +1,51 @@
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import '../styles/savify-home.css';
 
 export default function LandingPage() {
+    useEffect(() => {
+        // Handle mobile menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+
+        const toggleMenu = () => mobileNav?.classList.toggle('active');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleMenu);
+        }
+
+        const navLinks = document.querySelectorAll('.mobile-nav .nav-link');
+        const closeMenu = () => mobileNav?.classList.remove('active');
+        navLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+        // Handle fade-in animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+
+        return () => {
+            if (mobileMenuBtn) {
+                mobileMenuBtn.removeEventListener('click', toggleMenu);
+            }
+            navLinks.forEach(link => link.removeEventListener('click', closeMenu));
+            observer.disconnect();
+        };
+    }, []);
+
     return (
         <>
 
