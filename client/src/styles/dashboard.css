@@ -1471,6 +1471,13 @@
         display: none !important;
     }
 
+    .main-content {
+        margin-left: 0;
+        padding: var(--space-lg);
+        padding-bottom: 100px;
+        /* account for bottom nav */
+    }
+
     .mobile-bottom-nav {
         display: flex;
     }

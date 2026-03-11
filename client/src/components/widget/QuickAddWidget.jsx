@@ -61,7 +61,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
             if (clientX == null) return;
             const dx = clientX - startPoint.current.x;
             const dy = clientY - startPoint.current.y;
-            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved.current = true;
+            if (Math.abs(dx) > 10 || Math.abs(dy) > 10) hasMoved.current = true;
             const newPos = { x: startPos.current.x + dx, y: startPos.current.y + dy };
             setFabPos(newPos);
         };
