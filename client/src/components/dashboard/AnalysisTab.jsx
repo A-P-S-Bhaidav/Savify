@@ -5,7 +5,7 @@ import { chartColors, APP_START_DATE } from '../../utils/helpers';
 
 Chart.register(ArcElement, PieController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Filler, Tooltip);
 
-export default function AnalysisTab({ expenses, currentBudget }) {
+export default function AnalysisTab({ expenses, currentBudget, appData }) {
     const navigate = useNavigate();
     const pieRef = useRef(null);
     const lineRef = useRef(null);
@@ -109,6 +109,11 @@ export default function AnalysisTab({ expenses, currentBudget }) {
 
     return (
         <div className="analysis-container" id="captureArea">
+            {/* Tab Greeting */}
+            <div className="tab-greeting">
+                <h1>Hello, {appData?.full_name?.split(' ')[0] || 'User'}!</h1>
+                <p>Monitoring your progress.</p>
+            </div>
             <div className="report-header">
                 <h2 className="spending-report-title">Spending Report</h2>
                 <button className="detailed-analysis-btn" onClick={() => navigate('/deep-dive')}>
@@ -151,12 +156,6 @@ export default function AnalysisTab({ expenses, currentBudget }) {
             <div className="timestamp-tag" id="chartLastUpdate">
                 Updated: {new Date().toLocaleTimeString()}
             </div>
-
-            <footer className="app-footer">
-                <p>&copy; 2026 Savify. All rights reserved.</p>
-                <p><i className="fas fa-code"></i> Made with ❤️ by IIT KGP Students</p>
-                <p style={{ fontSize: '0.65rem', opacity: 0.7, marginTop: 5 }}>* Comments are AI generated</p>
-            </footer>
         </div>
     );
 }

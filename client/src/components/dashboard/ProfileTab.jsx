@@ -5,7 +5,11 @@ export default function ProfileTab({
 }) {
     return (
         <div className="profile-container">
-            {/* Profile Card */}
+            {/* Tab Greeting */}
+            <div className="tab-greeting">
+                <h1>Hello, {appData?.full_name?.split(' ')[0] || 'User'}!</h1>
+                <p>Monitoring your progress.</p>
+            </div>
             <div className="profile-header-card">
                 <div className="profile-avatar-wrapper">
                     <img src={avatarUrl} alt="Profile" className="profile-avatar" />

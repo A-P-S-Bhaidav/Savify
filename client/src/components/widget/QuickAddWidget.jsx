@@ -55,6 +55,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     useEffect(() => {
         const onMove = (e) => {
             if (!isDragging.current) return;
+            e.stopPropagation(); // Prevent tab swipe
             const clientX = e.clientX ?? e.touches?.[0]?.clientX;
             const clientY = e.clientY ?? e.touches?.[0]?.clientY;
             if (clientX == null) return;
@@ -62,31 +63,33 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
             const dx = clientX - startPoint.current.x;
             const dy = clientY - startPoint.current.y;
 
-            // Only consider it a drag if moved more than 5px
-            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+            // Only consider it a drag if moved more than 8px
+            if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
                 hasMoved.current = true;
-                e.preventDefault?.(); // Prevent scrolling only if actually dragging
+                e.preventDefault?.();
             }
 
-            const newPos = { x: startPos.current.x + dx, y: startPos.current.y + dy };
-            setFabPos(newPos);
+            if (hasMoved.current) {
+                const newPos = { x: startPos.current.x + dx, y: startPos.current.y + dy };
+                setFabPos(newPos);
+            }
         };
 
         const onEnd = (e) => {
             if (!isDragging.current) return;
+            e.stopPropagation(); // Prevent tab swipe
             isDragging.current = false;
 
-            setFabPos(prev => {
-                snapToEdge(prev);
-                return prev;
-            });
-
-            if (!hasMoved.current) {
-                // If it was just a tap and not a drag, toggle open state
-                // Use a short timeout to avoid touch/click collision on some devices
-                setTimeout(() => setIsOpen(prev => !prev), 10);
+            if (hasMoved.current) {
+                setFabPos(prev => {
+                    snapToEdge(prev);
+                    return prev;
+                });
+            } else {
+                // It was a tap — toggle open with a reliable timeout
+                setTimeout(() => setIsOpen(prev => !prev), 50);
             }
-            hasMoved.current = false; // Reset for next interaction
+            hasMoved.current = false;
         };
 
         window.addEventListener('mousemove', onMove);
@@ -102,6 +105,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     }, [snapToEdge]);
 
     const handleDown = (e) => {
+        e.stopPropagation(); // Prevent tab swipe
         isDragging.current = true;
         hasMoved.current = false;
         const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;

@@ -55,12 +55,41 @@
     z-index: var(--z-sticky);
     display: flex;
     flex-direction: column;
+    animation: sidebarSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes sidebarSlideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.sidebar-stagger-item {
+    animation: staggerFadeIn 0.4s ease backwards;
+}
+
+@keyframes staggerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .main-content {
     margin-left: 220px;
     flex: 1;
-    padding: var(--space-2xl) var(--space-xl);
+    padding: 80px var(--space-xl) var(--space-2xl);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -79,6 +108,22 @@
     align-items: center;
 }
 
+.sidebar-logo-animated {
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
 .logo-img {
     height: 36px;
     width: auto;
@@ -93,17 +138,50 @@
     text-decoration: none;
     border-radius: 10px;
     margin-bottom: 0.3rem;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     align-items: center;
     cursor: pointer;
     font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+    background: var(--color-emerald-light);
+    color: var(--color-emerald);
+    font-weight: 600;
+    transform: translateX(4px);
+}
+
 .nav-link.active {
     background: var(--color-emerald-light);
     color: var(--color-emerald);
     font-weight: 600;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+.nav-active-indicator {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--color-emerald);
+    border-radius: 3px 0 0 3px;
+    animation: indicatorSlide 0.3s ease;
+}
+
+@keyframes indicatorSlide {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+
+    to {
+        height: 60%;
+        opacity: 1;
+    }
 }
 
 .user-profile {
@@ -144,12 +222,92 @@
     color: #D4AF37;
 }
 
-/* ===== HEADER ===== */
-.header {
+/* ===== HEADER (Glassmorphism) ===== */
+.glass-header {
+    position: fixed;
+    top: 0;
+    left: 220px;
+    right: 0;
+    z-index: 100;
+    background: rgba(248, 245, 240, 0.7);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    height: 60px;
+}
+
+.header-particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.header-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
+    align-items: center;
+    padding: 0 1.5rem;
+    height: 100%;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.header-logo-img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+    animation: logoPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+    }
+}
+
+.header-logo-text {
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-emerald);
+}
+
+/* Tab Greeting */
+.tab-greeting {
+    margin-bottom: 1rem;
+    animation: slideUpFade 0.5s ease backwards;
+}
+
+.tab-greeting h1 {
+    font-family: var(--font-secondary);
+    font-size: 1.8rem;
+    margin-bottom: 0.15rem;
+    color: var(--color-obsidian);
+}
+
+.tab-greeting p {
+    font-size: 0.9rem;
+    color: var(--color-stone);
+    margin: 0;
 }
 
 .welcome-text h1 {
@@ -277,13 +435,25 @@
 /* SECTIONS & ANIMATIONS */
 .dashboard-section {
     display: none;
-    animation: slideUpFade var(--transition-slow) backwards;
+    animation: sectionEnter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
     flex: 1;
     width: 100%;
 }
 
 .dashboard-section.active {
     display: block;
+}
+
+@keyframes sectionEnter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideUpFade {
@@ -2027,6 +2197,32 @@
     background: var(--color-emerald);
     width: 24px;
     border-radius: 4px;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+/* Tutorial Progress Bar */
+.tutorial-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 4px;
+    margin: 0.6rem 0 0.3rem;
+    overflow: hidden;
+}
+
+.tutorial-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10B981, #34D399);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.tutorial-step-count {
+    font-size: 0.7rem;
+    color: var(--color-stone);
+    font-weight: 600;
+    text-align: right;
+    margin-bottom: 0.5rem;
 }
 
 /* EARLY ACCESS */
@@ -2072,8 +2268,41 @@
 
     .main-content {
         margin-left: 0;
-        padding: var(--space-lg);
+        padding: 80px var(--space-lg) var(--space-lg);
         padding-bottom: 140px;
+    }
+
+    .glass-header {
+        left: 0;
+        height: 56px;
+    }
+
+    .header-logo-img {
+        height: 24px;
+    }
+
+    .header-logo-text {
+        font-size: 1.1rem;
+    }
+
+    .header-actions {
+        gap: 6px;
+    }
+
+    .unwrapped-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+    }
+
+    .install-app-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+    }
+
+    .icon-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
     }
 
     .mobile-bottom-nav {
@@ -2092,31 +2321,52 @@
         display: flex;
     }
 
-    /* Header mobile */
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.8rem;
-    }
-
-    .header-actions {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    .welcome-text h1 {
+    .tab-greeting h1 {
         font-size: 1.5rem;
     }
 
-    /* Stats row mobile - stack */
-    .stats-row {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.8rem;
+    /* Mobile card stagger animations */
+    .widget-toggle-card {
+        animation: mobileCardIn 0.4s ease backwards;
+        animation-delay: 0.05s;
+    }
+
+    .savio-note-banner {
+        animation: mobileCardIn 0.4s ease backwards;
+        animation-delay: 0.1s;
     }
 
     .stat-card-dark {
+        animation: mobileCardIn 0.4s ease backwards;
+        animation-delay: 0.15s;
         grid-column: span 2;
         min-height: auto;
+    }
+
+    .stat-card-rank {
+        animation: mobileCardIn 0.4s ease backwards;
+        animation-delay: 0.2s;
+    }
+
+    .campus-mates-card {
+        animation: mobileCardIn 0.4s ease backwards;
+        animation-delay: 0.25s;
+    }
+
+    .weekly-budget-card {
+        animation: mobileCardIn 0.4s ease backwards;
+        animation-delay: 0.3s;
+    }
+
+    .transactions-card {
+        animation: mobileCardIn 0.4s ease backwards;
+        animation-delay: 0.35s;
+    }
+
+    /* Stats row mobile */
+    .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
     }
 
     .stat-card-value-large {
@@ -2149,6 +2399,51 @@
     /* Invite */
     .invite-type-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Button press micro-interaction */
+    .mobile-fab:active,
+    .install-app-btn:active,
+    .unwrapped-btn:active,
+    .sexy-btn:active,
+    .invite-next-btn:active {
+        transform: scale(0.93) !important;
+        transition: transform 0.1s ease;
+    }
+
+    /* Bottom nav active bounce */
+    .nav-item.active i {
+        animation: navBounce 0.4s ease;
+    }
+}
+
+@keyframes mobileCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes navBounce {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.3);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
     }
 }
 

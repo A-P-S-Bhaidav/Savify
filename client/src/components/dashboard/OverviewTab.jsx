@@ -1,5 +1,7 @@
 import { getCategoryIcon } from '../../utils/helpers';
 
+const AVATAR_COLORS = ['10B981', '3B82F6', '8B5CF6', 'F59E0B', 'EF4444', 'EC4899', '06B6D4', 'D946EF'];
+
 export default function OverviewTab({
     balanceScore, currentRank, tier, currentBudget,
     currentSpending, remaining, budgetPct, streak, aiComment, history, friends,
@@ -11,6 +13,11 @@ export default function OverviewTab({
 
     return (
         <>
+            {/* Tab Greeting */}
+            <div className="tab-greeting">
+                <h1>Hello, {appData?.full_name?.split(' ')[0] || 'User'}!</h1>
+                <p>Monitoring your progress.</p>
+            </div>
             {/* Widget Toggle - Topmost */}
             <div className="widget-toggle-card">
                 <div className="widget-toggle-info">
@@ -111,7 +118,8 @@ export default function OverviewTab({
                         </div>
 
                         {friends.map((friend, idx) => {
-                            const friendAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.full_name)}&background=0D9488&color=fff&size=100`;
+                            const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+                            const friendAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.full_name)}&background=${color}&color=fff&size=100`;
                             return (
                                 <div className="friend-item" key={idx}>
                                     <img src={friendAvatarUrl} alt={friend.full_name} className="friend-avatar" />

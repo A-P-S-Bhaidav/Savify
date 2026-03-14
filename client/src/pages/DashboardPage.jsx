@@ -45,7 +45,7 @@ export default function DashboardPage() {
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [widgetEnabled, setWidgetEnabled] = useState(() => {
         const saved = localStorage.getItem('savify_widget_enabled');
-        return saved === null ? true : saved === 'true'; // default ON
+        return saved === null ? true : saved === 'true';
     });
     const [showTutorial, setShowTutorial] = useState(false);
     const [showSwipeHint, setShowSwipeHint] = useState(false);
@@ -63,23 +63,19 @@ export default function DashboardPage() {
         trustLogic: false,
     });
 
-    // Pending expense for confirm modal
     const [pendingExpense, setPendingExpense] = useState(null);
 
     // Hooks
     const { expenses, history, fetchExpenses, fetchHistory, addExpense, calculateStreak } = useExpenses(user?.id);
     const { friends, loading: friendsLoading, hasMore, fetchFriends } = useFriends(user?.id);
 
-    // Swipe navigation - now includes support
-    const tabs = ['overview', 'analysis', 'profile', 'support'];
+    // Swipe navigation
     const touchStartRef = useRef({ x: 0, y: 0 });
     const swipeBlocked = useRef(false);
 
-    // Open/close modals
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
 
-    // Fetch score and rank from leaderboard view
     const fetchScoreAndRank = useCallback(async () => {
         if (!user) return;
         try {
@@ -88,18 +84,14 @@ export default function DashboardPage() {
                 .select('current_score, rank_number')
                 .eq('user_id', user.id)
                 .maybeSingle();
-
             if (!error && data) {
                 const score = Math.round(data.current_score || 0);
                 setBalanceScore(score === 0 ? 50 : score);
                 setCurrentRank(data.rank_number || 0);
             }
-        } catch (e) {
-            console.error('Score fetch error:', e);
-        }
+        } catch (e) { console.error('Score fetch error:', e); }
     }, [user]);
 
-    // Fetch AI comment
     const fetchAiComment = useCallback(async (category, amount, totalSpent, budget) => {
         try {
             const { data, error } = await supabase.functions.invoke('generate-comment', {
@@ -113,10 +105,8 @@ export default function DashboardPage() {
         }
     }, []);
 
-    // Initialize dashboard
     useEffect(() => {
         if (!user) return;
-
         const initDashboard = async () => {
             try {
                 const { data: app } = await supabase
@@ -124,31 +114,19 @@ export default function DashboardPage() {
                     .select('*')
                     .eq('user_id', user.id)
                     .maybeSingle();
-
                 setLoading(false);
-
-                if (!app) {
-                    setShowOnboarding(true);
-                    return;
-                }
+                if (!app) { setShowOnboarding(true); return; }
 
                 setAppData(app);
                 setCurrentBudget(parseCurrency(app.weekly_spending));
                 setCurrentSpending(parseCurrency(app.current_weekly_spent));
-
-                // Fetch data
                 await fetchScoreAndRank();
                 await fetchExpenses();
                 await fetchHistory();
                 const streakCount = await calculateStreak();
                 setStreak(streakCount);
+                if (app.college) fetchFriends(app.college);
 
-                // Fetch friends
-                if (app.college) {
-                    fetchFriends(app.college);
-                }
-
-                // Generate AI comment
                 const allExpenses = await fetchExpenses();
                 const filtered = allExpenses.filter(exp => new Date(exp.created_at) >= APP_START_DATE);
                 const total = filtered.reduce((sum, exp) => sum + exp.amount, 0);
@@ -162,18 +140,9 @@ export default function DashboardPage() {
                     setAiComment("Start spending... I'm getting bored.");
                 }
 
-                // Check action param
-                if (searchParams.get('action') === 'add') {
-                    setTimeout(() => openModal('expense'), 1000);
-                }
-
-                // Show tutorial for first-time users
+                if (searchParams.get('action') === 'add') setTimeout(() => openModal('expense'), 1000);
                 const tutorialDone = localStorage.getItem('savify_tutorial_done');
-                if (!tutorialDone) {
-                    setTimeout(() => setShowTutorial(true), 1500);
-                }
-
-                // Show swipe hint on mobile
+                if (!tutorialDone) setTimeout(() => setShowTutorial(true), 1500);
                 if (window.innerWidth <= 768) {
                     setShowSwipeHint(true);
                     setTimeout(() => setShowSwipeHint(false), 4000);
@@ -183,15 +152,11 @@ export default function DashboardPage() {
                 setLoading(false);
             }
         };
-
         initDashboard();
     }, [user]);
 
-    // Realtime updates
     const handleExpenseChange = useCallback(() => {
-        fetchScoreAndRank();
-        fetchExpenses();
-        fetchHistory();
+        fetchScoreAndRank(); fetchExpenses(); fetchHistory();
     }, [fetchScoreAndRank, fetchExpenses, fetchHistory]);
 
     const handleProfileChange = useCallback((payload) => {
@@ -205,7 +170,6 @@ export default function DashboardPage() {
 
     useRealtime(user?.id, handleExpenseChange, handleProfileChange);
 
-    // Submit expense flow
     const handleExpenseSubmit = (amount, category, description) => {
         setPendingExpense({ amount, category, description });
         closeModal('expense');
@@ -215,34 +179,21 @@ export default function DashboardPage() {
     const handleConfirmExpense = async () => {
         if (!pendingExpense) return;
         const { amount, category, description } = pendingExpense;
-
         try {
             await addExpense(amount, category, description);
-
-            // Update local state
             const newSpending = currentSpending + amount;
             setCurrentSpending(newSpending);
-
-            // Update user_applications
             let projectedScore = 1000 - Math.round((newSpending / Math.max(currentBudget, 1)) * 1000);
             projectedScore = Math.max(0, Math.min(1000, projectedScore));
-
             await supabase.from('user_applications')
                 .update({ current_weekly_spent: newSpending, current_score: projectedScore })
                 .eq('user_id', user.id);
-
-            // AI comment
             const comment = await fetchAiComment(category, amount, newSpending, currentBudget);
             setAiComment(comment);
-
             closeModal('confirm');
             setPendingExpense(null);
-
-            // Refresh data
             await fetchHistory();
             await fetchScoreAndRank();
-
-            // Confetti
             if (typeof window.confetti === 'function') {
                 window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#FF5722', '#D4AF37', '#000000'] });
             }
@@ -252,34 +203,29 @@ export default function DashboardPage() {
         }
     };
 
-    // Tab switching
     const switchTab = (tab) => {
-        if (tab === 'support') {
-            openModal('support');
-            return;
-        }
+        if (tab === 'support') { openModal('support'); return; }
         setActiveTab(tab);
     };
 
-    // Swipe handlers - improved to not conflict with friends-grid scrolling
+    // Swipe handlers — block when touching widget, friends-grid or scrollable areas
     const handleTouchStart = (e) => {
-        // Block tab swipe if touching scrollable containers
-        const scrollContainers = ['.friends-grid', '.campus-mates-card', '.transactions-list'];
-        const isScrollContainer = scrollContainers.some(sel => e.target.closest(sel));
-        swipeBlocked.current = isScrollContainer;
+        const blockedSelectors = [
+            '.friends-grid', '.campus-mates-card', '.transactions-list',
+            '.widget-fab', '.widget-cat-btn-wrapper', '.widget-backdrop',
+            '.widget-popup-overlay'
+        ];
+        swipeBlocked.current = blockedSelectors.some(sel => e.target.closest(sel));
         touchStartRef.current = { x: e.changedTouches[0].screenX, y: e.changedTouches[0].screenY };
     };
 
     const handleTouchEnd = (e) => {
-        if (swipeBlocked.current) {
-            swipeBlocked.current = false;
-            return;
-        }
+        if (swipeBlocked.current) { swipeBlocked.current = false; return; }
         const endX = e.changedTouches[0].screenX;
         const endY = e.changedTouches[0].screenY;
         const xDiff = touchStartRef.current.x - endX;
         const yDiff = touchStartRef.current.y - endY;
-        if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > 50) {
+        if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > 80) {
             const swipeTabs = ['overview', 'analysis', 'profile'];
             const currentIdx = swipeTabs.indexOf(activeTab);
             if (currentIdx === -1) return;
@@ -288,29 +234,11 @@ export default function DashboardPage() {
         }
     };
 
-    // Onboarding complete
-    const handleOnboardingComplete = () => {
-        setShowOnboarding(false);
-        window.location.reload();
-    };
+    const handleOnboardingComplete = () => { setShowOnboarding(false); window.location.reload(); };
+    const handleReplayTutorial = () => { setShowTutorial(true); };
 
-    // Replay tutorial
-    const handleReplayTutorial = () => {
-        setShowTutorial(true);
-    };
-
-    if (loading) {
-        return (
-            <div className="dashboard-loader">
-                <div className="spinner"></div>
-            </div>
-        );
-    }
-
-    if (showOnboarding) {
-        return <OnboardingForm user={user} onComplete={handleOnboardingComplete} />;
-    }
-
+    if (loading) return <div className="dashboard-loader"><div className="spinner"></div></div>;
+    if (showOnboarding) return <OnboardingForm user={user} onComplete={handleOnboardingComplete} />;
     if (!appData) return null;
 
     const tier = getTierFromScore(balanceScore);
@@ -330,30 +258,16 @@ export default function DashboardPage() {
                 />
 
                 <main className="main-content">
-                    <Header
-                        appData={appData}
-                        onInstall={() => { }}
-                        onHelp={() => openModal('howItWorks')}
-                        onAddExpense={() => openModal('expense')}
-                    />
+                    <Header onHelp={() => openModal('howItWorks')} />
 
                     {/* Overview Tab */}
                     <div className={`dashboard-section ${activeTab === 'overview' ? 'active' : ''}`}>
                         <OverviewTab
-                            balanceScore={balanceScore}
-                            currentRank={currentRank}
-                            tier={tier}
-                            currentBudget={currentBudget}
-                            currentSpending={currentSpending}
-                            remaining={remaining}
-                            budgetPct={budgetPct}
-                            streak={streak}
-                            aiComment={aiComment}
-                            history={history}
-                            friends={friends}
-                            friendsLoading={friendsLoading}
-                            hasMoreFriends={hasMore}
-                            appData={appData}
+                            balanceScore={balanceScore} currentRank={currentRank} tier={tier}
+                            currentBudget={currentBudget} currentSpending={currentSpending}
+                            remaining={remaining} budgetPct={budgetPct} streak={streak}
+                            aiComment={aiComment} history={history} friends={friends}
+                            friendsLoading={friendsLoading} hasMoreFriends={hasMore} appData={appData}
                             onAddExpense={() => openModal('expense')}
                             onOpenInvite={() => openModal('invite')}
                             onOpenEdit={() => openModal('edit')}
@@ -367,23 +281,15 @@ export default function DashboardPage() {
 
                     {/* Analysis Tab */}
                     <div className={`dashboard-section ${activeTab === 'analysis' ? 'active' : ''}`}>
-                        <AnalysisTab
-                            expenses={expenses}
-                            currentBudget={currentBudget}
-                        />
+                        <AnalysisTab expenses={expenses} currentBudget={currentBudget} appData={appData} />
                     </div>
 
                     {/* Profile Tab */}
                     <div className={`dashboard-section ${activeTab === 'profile' ? 'active' : ''}`}>
                         <ProfileTab
-                            appData={appData}
-                            user={user}
-                            balanceScore={balanceScore}
-                            currentRank={currentRank}
-                            tier={tier}
-                            currentBudget={currentBudget}
-                            currentSpending={currentSpending}
-                            avatarUrl={avatarUrl}
+                            appData={appData} user={user} balanceScore={balanceScore}
+                            currentRank={currentRank} tier={tier} currentBudget={currentBudget}
+                            currentSpending={currentSpending} avatarUrl={avatarUrl}
                             onEdit={() => openModal('edit')}
                             onLogout={async () => { await signOut(); window.location.href = "/login"; }}
                         />
@@ -399,102 +305,44 @@ export default function DashboardPage() {
 
             <MobileBottomNav activeTab={activeTab} onTabChange={switchTab} />
 
-            {/* FAB for mobile */}
             <button className="mobile-fab" onClick={() => openModal('expense')}>
                 <i className="fas fa-plus"></i>
                 <span>Add Expense</span>
             </button>
 
-            {/* Quick Add Widget */}
             {widgetEnabled && (
                 <QuickAddWidget
-                    user={user}
-                    addExpense={addExpense}
-                    currentBudget={currentBudget}
-                    currentSpending={currentSpending}
-                    fetchScoreAndRank={fetchScoreAndRank}
-                    fetchHistory={fetchHistory}
-                    fetchExpenses={fetchExpenses}
+                    user={user} addExpense={addExpense}
+                    currentBudget={currentBudget} currentSpending={currentSpending}
+                    fetchScoreAndRank={fetchScoreAndRank} fetchHistory={fetchHistory} fetchExpenses={fetchExpenses}
                 />
             )}
 
-            {/* Swipe dots */}
             <div className="swipe-dots">
                 {['overview', 'analysis', 'profile'].map((tab) => (
                     <div key={tab} className={`dot ${activeTab === tab ? 'active' : ''}`}></div>
                 ))}
             </div>
 
-            {/* Swipe hint pill */}
-            {showSwipeHint && (
-                <div className="swipe-hint-pill">
-                    Swipe <span>↔</span> to navigate
-                </div>
-            )}
+            {showSwipeHint && <div className="swipe-hint-pill">Swipe <span>↔</span> to navigate</div>}
 
-            {/* Tutorial */}
             {showTutorial && (
                 <TutorialOverlay
                     onComplete={() => setShowTutorial(false)}
                     onOpenExpense={() => openModal('expense')}
+                    onSwitchTab={switchTab}
                 />
             )}
 
-            {/* Modals */}
-            <ExpenseModal
-                isOpen={modals.expense}
-                onClose={() => closeModal('expense')}
-                onSubmit={handleExpenseSubmit}
-            />
-
-            <ConfirmModal
-                isOpen={modals.confirm}
-                onClose={() => closeModal('confirm')}
-                onConfirm={handleConfirmExpense}
-                expense={pendingExpense}
-            />
-
-            <InviteModal
-                isOpen={modals.invite}
-                onClose={() => closeModal('invite')}
-                user={user}
-                appData={appData}
-            />
-
-            <EditProfileModal
-                isOpen={modals.edit}
-                onClose={() => closeModal('edit')}
-                user={user}
-            />
-
-            <SupportModal
-                isOpen={modals.support}
-                onClose={() => closeModal('support')}
-                onContact={() => { closeModal('support'); openModal('contact'); }}
-                onFeedback={() => { closeModal('support'); openModal('feedback'); }}
-            />
-
-            <ContactModal
-                isOpen={modals.contact}
-                onClose={() => closeModal('contact')}
-                user={user}
-            />
-
-            <FeedbackModal
-                isOpen={modals.feedback}
-                onClose={() => closeModal('feedback')}
-                user={user}
-            />
-
-            <HowItWorksModal
-                isOpen={modals.howItWorks}
-                onClose={() => closeModal('howItWorks')}
-            />
-
-            <TrustLogicModal
-                isOpen={modals.trustLogic}
-                onClose={() => closeModal('trustLogic')}
-            />
+            <ExpenseModal isOpen={modals.expense} onClose={() => closeModal('expense')} onSubmit={handleExpenseSubmit} />
+            <ConfirmModal isOpen={modals.confirm} onClose={() => closeModal('confirm')} onConfirm={handleConfirmExpense} expense={pendingExpense} />
+            <InviteModal isOpen={modals.invite} onClose={() => closeModal('invite')} user={user} appData={appData} />
+            <EditProfileModal isOpen={modals.edit} onClose={() => closeModal('edit')} user={user} />
+            <SupportModal isOpen={modals.support} onClose={() => closeModal('support')} onContact={() => { closeModal('support'); openModal('contact'); }} onFeedback={() => { closeModal('support'); openModal('feedback'); }} />
+            <ContactModal isOpen={modals.contact} onClose={() => closeModal('contact')} user={user} />
+            <FeedbackModal isOpen={modals.feedback} onClose={() => closeModal('feedback')} user={user} />
+            <HowItWorksModal isOpen={modals.howItWorks} onClose={() => closeModal('howItWorks')} />
+            <TrustLogicModal isOpen={modals.trustLogic} onClose={() => closeModal('trustLogic')} />
         </div>
     );
 }

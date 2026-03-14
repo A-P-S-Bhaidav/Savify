@@ -17,7 +17,7 @@ export default function LandingPage() {
         const closeMenu = () => mobileNav?.classList.remove('active');
         navLinks.forEach(link => link.addEventListener('click', closeMenu));
 
-        // Handle fade-in animations - robustly for React StrictMode
+        // Handle fade-in animations
         const fadeElements = document.querySelectorAll('.fade-in');
         let observer = null;
 
@@ -42,6 +42,52 @@ export default function LandingPage() {
             });
         }
 
+        // === Balance Score Circle Animation ===
+        const scoreEl = document.getElementById('scoreValue');
+        const progressEl = document.getElementById('scoreProgress');
+        const needleEl = document.querySelector('.score-needle');
+        let scoreObserver = null;
+        let scoreAnimated = false;
+
+        if (scoreEl) {
+            scoreObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !scoreAnimated) {
+                        scoreAnimated = true;
+                        const targetScore = 847;
+                        const duration = 2500; // ms
+                        const startTime = performance.now();
+
+                        const animate = (now) => {
+                            const elapsed = now - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            // Linear interpolation
+                            const currentScore = Math.round(progress * targetScore);
+                            scoreEl.textContent = currentScore;
+
+                            // Needle rotation: 0-240 degrees
+                            if (needleEl) {
+                                needleEl.style.transform = `rotate(${progress * 240}deg)`;
+                            }
+
+                            // Progress bar width
+                            if (progressEl) {
+                                progressEl.style.width = `${(currentScore / 1000) * 100}%`;
+                            }
+
+                            if (progress < 1) {
+                                requestAnimationFrame(animate);
+                            }
+                        };
+                        requestAnimationFrame(animate);
+                        scoreObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            scoreObserver.observe(scoreEl);
+        }
+
         return () => {
             if (mobileMenuBtn) {
                 mobileMenuBtn.removeEventListener('click', toggleMenu);
@@ -49,6 +95,9 @@ export default function LandingPage() {
             navLinks.forEach(link => link.removeEventListener('click', closeMenu));
             if (observer) {
                 observer.disconnect();
+            }
+            if (scoreObserver) {
+                scoreObserver.disconnect();
             }
         };
     }, []);
