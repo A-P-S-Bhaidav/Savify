@@ -35,13 +35,13 @@ export default function Header({ appData, onHelp, onAddExpense }) {
                     <i className="fas fa-headset"></i>
                 </button>
 
-                <button className="generating-pill" onClick={() => window.open('/unwrapped', '_blank')}>
-                    <i className="fas fa-circle-notch fa-spin"></i> Generating...
+                <button className="unwrapped-btn" onClick={() => window.open('/unwrapped', '_blank')}>
+                    <i className="fas fa-gift" style={{ color: 'var(--color-emerald)' }}></i> Unwrapped
                 </button>
 
-                {!isInstalled && deferredPrompt && (
+                {!isInstalled && (
                     <button className="install-app-btn" onClick={handleInstall}>
-                        I App
+                        <i className="fas fa-download"></i> App
                     </button>
                 )}
                 {isInstalled && (

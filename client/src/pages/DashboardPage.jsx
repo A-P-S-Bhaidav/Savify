@@ -22,6 +22,7 @@ import SupportModal from '../components/modals/SupportModal';
 import ContactModal from '../components/modals/ContactModal';
 import FeedbackModal from '../components/modals/FeedbackModal';
 import HowItWorksModal from '../components/modals/HowItWorksModal';
+import TrustLogicModal from '../components/modals/TrustLogicModal';
 import OnboardingForm from '../components/onboarding/OnboardingForm';
 import QuickAddWidget from '../components/widget/QuickAddWidget';
 import TutorialOverlay from '../components/tutorial/TutorialOverlay';
@@ -59,6 +60,7 @@ export default function DashboardPage() {
         contact: false,
         feedback: false,
         howItWorks: false,
+        trustLogic: false,
     });
 
     // Pending expense for confirm modal
@@ -68,9 +70,10 @@ export default function DashboardPage() {
     const { expenses, history, fetchExpenses, fetchHistory, addExpense, calculateStreak } = useExpenses(user?.id);
     const { friends, loading: friendsLoading, hasMore, fetchFriends } = useFriends(user?.id);
 
-    // Swipe navigation
-    const tabs = ['overview', 'analysis', 'profile'];
+    // Swipe navigation - now includes support
+    const tabs = ['overview', 'analysis', 'profile', 'support'];
     const touchStartRef = useRef({ x: 0, y: 0 });
+    const swipeBlocked = useRef(false);
 
     // Open/close modals
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
@@ -250,23 +253,38 @@ export default function DashboardPage() {
     };
 
     // Tab switching
-    const switchTab = (tab) => setActiveTab(tab);
+    const switchTab = (tab) => {
+        if (tab === 'support') {
+            openModal('support');
+            return;
+        }
+        setActiveTab(tab);
+    };
 
-    // Swipe handlers
+    // Swipe handlers - improved to not conflict with friends-grid scrolling
     const handleTouchStart = (e) => {
-        if (e.target.closest('.friends-grid')) return;
+        // Block tab swipe if touching scrollable containers
+        const scrollContainers = ['.friends-grid', '.campus-mates-card', '.transactions-list'];
+        const isScrollContainer = scrollContainers.some(sel => e.target.closest(sel));
+        swipeBlocked.current = isScrollContainer;
         touchStartRef.current = { x: e.changedTouches[0].screenX, y: e.changedTouches[0].screenY };
     };
 
     const handleTouchEnd = (e) => {
+        if (swipeBlocked.current) {
+            swipeBlocked.current = false;
+            return;
+        }
         const endX = e.changedTouches[0].screenX;
         const endY = e.changedTouches[0].screenY;
         const xDiff = touchStartRef.current.x - endX;
         const yDiff = touchStartRef.current.y - endY;
         if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > 50) {
-            const currentIdx = tabs.indexOf(activeTab);
-            if (xDiff > 0 && currentIdx < tabs.length - 1) switchTab(tabs[currentIdx + 1]);
-            else if (xDiff < 0 && currentIdx > 0) switchTab(tabs[currentIdx - 1]);
+            const swipeTabs = ['overview', 'analysis', 'profile'];
+            const currentIdx = swipeTabs.indexOf(activeTab);
+            if (currentIdx === -1) return;
+            if (xDiff > 0 && currentIdx < swipeTabs.length - 1) switchTab(swipeTabs[currentIdx + 1]);
+            else if (xDiff < 0 && currentIdx > 0) switchTab(swipeTabs[currentIdx - 1]);
         }
     };
 
@@ -274,6 +292,11 @@ export default function DashboardPage() {
     const handleOnboardingComplete = () => {
         setShowOnboarding(false);
         window.location.reload();
+    };
+
+    // Replay tutorial
+    const handleReplayTutorial = () => {
+        setShowTutorial(true);
     };
 
     if (loading) {
@@ -337,6 +360,8 @@ export default function DashboardPage() {
                             onLoadMoreFriends={() => appData?.college && fetchFriends(appData.college, true)}
                             widgetEnabled={widgetEnabled}
                             onToggleWidget={(val) => { setWidgetEnabled(val); localStorage.setItem('savify_widget_enabled', val ? 'true' : 'false'); }}
+                            onOpenTrustLogic={() => openModal('trustLogic')}
+                            onReplayTutorial={handleReplayTutorial}
                         />
                     </div>
 
@@ -395,7 +420,7 @@ export default function DashboardPage() {
 
             {/* Swipe dots */}
             <div className="swipe-dots">
-                {tabs.map((tab) => (
+                {['overview', 'analysis', 'profile'].map((tab) => (
                     <div key={tab} className={`dot ${activeTab === tab ? 'active' : ''}`}></div>
                 ))}
             </div>
@@ -464,6 +489,11 @@ export default function DashboardPage() {
             <HowItWorksModal
                 isOpen={modals.howItWorks}
                 onClose={() => closeModal('howItWorks')}
+            />
+
+            <TrustLogicModal
+                isOpen={modals.trustLogic}
+                onClose={() => closeModal('trustLogic')}
             />
         </div>
     );

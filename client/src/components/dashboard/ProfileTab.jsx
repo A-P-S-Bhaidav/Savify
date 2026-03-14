@@ -34,8 +34,8 @@ export default function ProfileTab({
                         </div>
                     </div>
                 </div>
-                <button className="verified-delete-btn" title="Dismiss">
-                    <i className="fas fa-trash-alt"></i>
+                <button className="verified-institute-btn" title="Institute Verified">
+                    <i className="fas fa-university"></i>
                 </button>
             </div>
 

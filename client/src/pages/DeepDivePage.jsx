@@ -1,13 +1,13 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useExpenses } from '../hooks/useExpenses';
 import { supabase } from '../config/supabase';
 import { parseCurrency, chartColors, APP_START_DATE } from '../utils/helpers';
-import { Chart, ArcElement, DoughnutController, Tooltip } from 'chart.js';
+import { Chart, ArcElement, DoughnutController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js';
 import '../styles/dashboard.css';
 
-Chart.register(ArcElement, DoughnutController, Tooltip);
+Chart.register(ArcElement, DoughnutController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Filler, Tooltip);
 
 export default function DeepDivePage() {
     const navigate = useNavigate();
@@ -15,9 +15,30 @@ export default function DeepDivePage() {
     const { expenses, fetchExpenses } = useExpenses(user?.id);
     const donutRef = useRef(null);
     const donutChartRef = useRef(null);
+    const velocityRef = useRef(null);
+    const velocityChartRef = useRef(null);
+    const [budgetVal, setBudgetVal] = useState(0);
 
     useEffect(() => {
         if (user) fetchExpenses();
+    }, [user]);
+
+    // Fetch budget from user_applications
+    useEffect(() => {
+        if (!user) return;
+        const fetchBudget = async () => {
+            const { data } = await supabase
+                .from('user_applications')
+                .select('weekly_spending, current_weekly_spent')
+                .eq('user_id', user.id)
+                .maybeSingle();
+            if (data) {
+                const val = parseCurrency(data.weekly_spending);
+                localStorage.setItem('savify_deep_dive_budget', val);
+                setBudgetVal(val);
+            }
+        };
+        fetchBudget();
     }, [user]);
 
     const filteredExpenses = useMemo(() => {
@@ -40,7 +61,7 @@ export default function DeepDivePage() {
     }, [filteredExpenses]);
 
     // Calculate daily stats
-    const { bestDay, worstDay, dailyAverage, runwayDays } = useMemo(() => {
+    const { bestDay, worstDay, dailyAverage, runwayDays, allTimeDailyData, allTimeDayLabels } = useMemo(() => {
         const dailyTotals = {};
         filteredExpenses.forEach(exp => {
             const dateStr = new Date(exp.created_at).toISOString().split('T')[0];
@@ -54,40 +75,60 @@ export default function DeepDivePage() {
         let dailyAverage = totalDays > 0 ? totalSpent / totalDays : 0;
 
         if (days.length > 0) {
-            const sorted = days.sort((a, b) => a[1] - b[1]);
+            const sorted = [...days].sort((a, b) => a[1] - b[1]);
             bestDay = { date: sorted[0][0], amount: sorted[0][1] };
             worstDay = { date: sorted[sorted.length - 1][0], amount: sorted[sorted.length - 1][1] };
         }
 
-        // Runway: how many days left until budget exhausted
-        // Read budget from localStorage or use a default
-        let budget = 0;
-        try {
-            const storedBudget = localStorage.getItem('savify_deep_dive_budget');
-            budget = storedBudget ? parseFloat(storedBudget) : 0;
-        } catch { }
-
-        const remaining = budget - totalSpent;
+        const remaining = budgetVal - totalSpent;
         const runwayDays = dailyAverage > 0 ? Math.max(0, Math.floor(remaining / dailyAverage)) : 0;
 
-        return { bestDay, worstDay, dailyAverage, runwayDays };
-    }, [filteredExpenses, totalSpent]);
+        // All-time daily data sorted by date
+        const sortedDays = days.sort((a, b) => a[0].localeCompare(b[0]));
+        const allTimeDayLabels = sortedDays.map(([date]) => {
+            const d = new Date(date);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
+        const allTimeDailyData = sortedDays.map(([, amount]) => amount);
 
-    // Fetch budget from user_applications
-    useEffect(() => {
-        if (!user) return;
-        const fetchBudget = async () => {
-            const { data } = await supabase
-                .from('user_applications')
-                .select('weekly_spending, current_weekly_spent')
-                .eq('user_id', user.id)
-                .maybeSingle();
-            if (data) {
-                localStorage.setItem('savify_deep_dive_budget', parseCurrency(data.weekly_spending));
-            }
+        return { bestDay, worstDay, dailyAverage, runwayDays, allTimeDailyData, allTimeDayLabels };
+    }, [filteredExpenses, totalSpent, budgetVal]);
+
+    // Weekly comparison
+    const weeklyComparison = useMemo(() => {
+        const now = new Date();
+        const thisWeekStart = new Date(now);
+        thisWeekStart.setDate(now.getDate() - now.getDay());
+        thisWeekStart.setHours(0, 0, 0, 0);
+
+        const lastWeekStart = new Date(thisWeekStart);
+        lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+        const lastWeekEnd = new Date(thisWeekStart);
+
+        const thisWeekExpenses = filteredExpenses.filter(exp => new Date(exp.created_at) >= thisWeekStart);
+        const lastWeekExpenses = filteredExpenses.filter(exp => {
+            const d = new Date(exp.created_at);
+            return d >= lastWeekStart && d < lastWeekEnd;
+        });
+
+        const thisTotal = thisWeekExpenses.reduce((s, e) => s + e.amount, 0);
+        const lastTotal = lastWeekExpenses.reduce((s, e) => s + e.amount, 0);
+
+        const daysSoFar = Math.max(1, now.getDay() || 7);
+        const thisAvg = thisTotal / daysSoFar;
+        const lastAvg = lastWeekExpenses.length > 0 ? lastTotal / 7 : 0;
+
+        return {
+            thisTotal, lastTotal,
+            thisAvg: Math.round(thisAvg),
+            lastAvg: Math.round(lastAvg),
+            thisCount: thisWeekExpenses.length,
+            lastCount: lastWeekExpenses.length,
+            totalDiff: thisTotal - lastTotal,
+            avgDiff: Math.round(thisAvg - lastAvg),
+            countDiff: thisWeekExpenses.length - lastWeekExpenses.length
         };
-        fetchBudget();
-    }, [user]);
+    }, [filteredExpenses]);
 
     // Donut chart
     useEffect(() => {
@@ -125,6 +166,41 @@ export default function DeepDivePage() {
         };
     }, [pieLabels, pieData]);
 
+    // Velocity chart (all time)
+    useEffect(() => {
+        if (!velocityRef.current || allTimeDailyData.length === 0) return;
+        if (velocityChartRef.current) velocityChartRef.current.destroy();
+
+        velocityChartRef.current = new Chart(velocityRef.current.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: allTimeDayLabels,
+                datasets: [{
+                    label: 'Daily Spending',
+                    data: allTimeDailyData,
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.15)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#999' } },
+                    x: { grid: { display: false }, ticks: { color: '#999', maxTicksLimit: 6 } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        return () => {
+            if (velocityChartRef.current) velocityChartRef.current.destroy();
+        };
+    }, [allTimeDailyData, allTimeDayLabels]);
+
     const formatDate = (dateStr) => {
         if (dateStr === 'N/A') return 'N/A';
         const d = new Date(dateStr);
@@ -141,14 +217,12 @@ export default function DeepDivePage() {
                 link.click();
             });
         } else {
-            // Fallback: share via native share API
             if (navigator.share) {
                 navigator.share({ title: 'My Savify Deep Dive Report', text: 'Check out my spending analysis!' });
             }
         }
     };
 
-    const budgetVal = parseFloat(localStorage.getItem('savify_deep_dive_budget') || '0');
     const remaining = budgetVal - totalSpent;
     const budgetExhausted = remaining <= 0;
 
@@ -210,17 +284,63 @@ export default function DeepDivePage() {
                     <div className="donut-legend">
                         {pieLabels.map((label, index) => {
                             const amount = pieData[index];
+                            const percent = totalSpent > 0 ? ((amount / totalSpent) * 100).toFixed(1) : 0;
                             const color = chartColors[index % chartColors.length];
                             return (
                                 <div className="donut-legend-item" key={label}>
                                     <span className="legend-dot" style={{ background: color }}></span>
-                                    <span>{label}</span>
-                                    <span className="donut-legend-amount">₹{amount.toLocaleString()}</span>
+                                    <span>{label} {percent}%</span>
                                 </div>
                             );
                         })}
                     </div>
                 </div>
+
+                {/* Spending Velocity (All Time) */}
+                <div className="velocity-card">
+                    <h3><i className="fas fa-chart-area" style={{ marginRight: 8 }}></i> Spending Velocity (All Time)</h3>
+                    <div className="velocity-chart-wrapper">
+                        <canvas ref={velocityRef}></canvas>
+                    </div>
+                </div>
+
+                {/* Weekly Comparison */}
+                <div className="weekly-comparison-card">
+                    <h3><i className="fas fa-exchange-alt" style={{ marginRight: 8, color: '#D4AF37' }}></i> Weekly Comparison</h3>
+                    <p className="weekly-comparison-subtitle">This Week vs Last Week</p>
+                    <div className="weekly-comparison-table">
+                        <div className="weekly-comparison-row">
+                            <span className="weekly-comparison-label">Total Spent</span>
+                            <div className="weekly-comparison-value-group">
+                                <span className="weekly-comparison-value">₹{weeklyComparison.thisTotal.toLocaleString()}</span>
+                                <span className={`weekly-comparison-diff ${weeklyComparison.totalDiff > 0 ? 'negative' : 'positive'}`}>
+                                    {weeklyComparison.totalDiff > 0 ? '+' : ''}₹{weeklyComparison.totalDiff.toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="weekly-comparison-row">
+                            <span className="weekly-comparison-label">Daily Average</span>
+                            <div className="weekly-comparison-value-group">
+                                <span className="weekly-comparison-value">₹{weeklyComparison.thisAvg.toLocaleString()}</span>
+                                <span className={`weekly-comparison-diff ${weeklyComparison.avgDiff > 0 ? 'negative' : 'positive'}`}>
+                                    {weeklyComparison.avgDiff > 0 ? '+' : ''}₹{weeklyComparison.avgDiff.toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="weekly-comparison-row">
+                            <span className="weekly-comparison-label">Transaction Count</span>
+                            <div className="weekly-comparison-value-group">
+                                <span className="weekly-comparison-value">{weeklyComparison.thisCount}</span>
+                                <span className={`weekly-comparison-diff ${weeklyComparison.countDiff > 0 ? 'negative' : 'positive'}`}>
+                                    {weeklyComparison.countDiff > 0 ? '+' : ''}{weeklyComparison.countDiff}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Data Disclaimer */}
+                <p className="deep-dive-disclaimer">Data is sourced from your verified activity.</p>
             </div>
         </div>
     );

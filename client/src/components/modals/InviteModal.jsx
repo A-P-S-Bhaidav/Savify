@@ -2,10 +2,16 @@ import { useState } from 'react';
 import { supabase } from '../../config/supabase';
 
 export default function InviteModal({ isOpen, onClose, user, appData }) {
-    const [inviteType, setInviteType] = useState('campus');
+    const [step, setStep] = useState(1); // 1 = choose type, 2 = enter email
+    const [inviteType, setInviteType] = useState(null);
     const [email, setEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+
+    const handleNext = () => {
+        if (!inviteType) { alert('Please select Campus Mate or Outsider!'); return; }
+        setStep(2);
+    };
 
     const handleSend = async () => {
         if (!email.trim()) { alert('Please enter an email!'); return; }
@@ -21,7 +27,13 @@ export default function InviteModal({ isOpen, onClose, user, appData }) {
             });
             if (error) throw error;
             setSuccess(true);
-            setTimeout(() => { setSuccess(false); setEmail(''); onClose(); }, 2000);
+            setTimeout(() => {
+                setSuccess(false);
+                setEmail('');
+                setStep(1);
+                setInviteType(null);
+                onClose();
+            }, 2000);
         } catch (err) {
             console.error('Invite error:', err);
             alert('Failed to send invite. Try again!');
@@ -30,14 +42,21 @@ export default function InviteModal({ isOpen, onClose, user, appData }) {
         }
     };
 
+    const handleClose = () => {
+        setStep(1);
+        setInviteType(null);
+        setEmail('');
+        onClose();
+    };
+
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="modal">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h2 style={{ fontFamily: 'var(--font-secondary)' }}><i className="fas fa-user-plus" style={{ marginRight: 10, color: 'var(--color-emerald)' }}></i> Invite Friend</h2>
-                    <span className="close-modal" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && handleClose()}>
+            <div className="modal invite-modal-redesign">
+                <div className="invite-modal-top">
+                    <h2 className="invite-modal-title">Invite Friend</h2>
+                    <span className="close-modal" onClick={handleClose}>&times;</span>
                 </div>
 
                 {success ? (
@@ -46,24 +65,57 @@ export default function InviteModal({ isOpen, onClose, user, appData }) {
                         <h3 className="gold-text-gradient">Invite Sent!</h3>
                         <p style={{ color: 'var(--color-stone)' }}>Your friend will receive the invite shortly.</p>
                     </div>
-                ) : (
+                ) : step === 1 ? (
                     <>
+                        <div className="invite-limit-note">
+                            <i className="fas fa-exclamation-circle"></i> Note: You are limited to 2 invites per day.
+                        </div>
+
+                        <p className="invite-question">Who are you inviting?</p>
+
                         <div className="invite-type-grid">
-                            <div className={`invite-option ${inviteType === 'campus' ? 'selected' : ''}`} onClick={() => setInviteType('campus')}>
+                            <div
+                                className={`invite-option ${inviteType === 'campus' ? 'selected' : ''}`}
+                                onClick={() => setInviteType('campus')}
+                            >
                                 <i className="fas fa-university"></i>
                                 <div className="invite-label">Campus Mate</div>
-                                <div className="invite-desc">Same college buddy</div>
+                                <div className="invite-desc">From your college</div>
                             </div>
-                            <div className={`invite-option ${inviteType === 'friend' ? 'selected' : ''}`} onClick={() => setInviteType('friend')}>
-                                <i className="fas fa-user-friends"></i>
-                                <div className="invite-label">Friend</div>
-                                <div className="invite-desc">Anyone from anywhere</div>
+                            <div
+                                className={`invite-option ${inviteType === 'friend' ? 'selected' : ''}`}
+                                onClick={() => setInviteType('friend')}
+                            >
+                                <i className="fas fa-globe"></i>
+                                <div className="invite-label">Outsider</div>
+                                <div className="invite-desc">Anyone else</div>
                             </div>
                         </div>
 
+                        <button className="invite-next-btn" onClick={handleNext}>
+                            NEXT
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button className="invite-back-btn" onClick={() => setStep(1)}>
+                            <i className="fas fa-arrow-left"></i> Back
+                        </button>
+
+                        <p className="invite-question" style={{ marginTop: '0.5rem' }}>
+                            Enter {inviteType === 'campus' ? "your campus mate's" : "your friend's"} email
+                        </p>
+
                         <div className="form-group">
-                            <label>Friend's Email</label>
-                            <input className="sexy-input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="friend@email.com" />
+                            <label>{inviteType === 'campus' ? "Campus Mate's" : "Friend's"} Email</label>
+                            <input
+                                className="sexy-input"
+                                type="email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                                placeholder="friend@email.com"
+                                autoFocus
+                            />
                         </div>
 
                         <button className="sexy-btn" onClick={handleSend} disabled={submitting}>

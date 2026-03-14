@@ -5,25 +5,46 @@ export default function OverviewTab({
     currentSpending, remaining, budgetPct, streak, aiComment, history, friends,
     friendsLoading, hasMoreFriends, appData,
     onAddExpense, onOpenInvite, onOpenEdit, onLoadMoreFriends,
-    widgetEnabled, onToggleWidget
+    widgetEnabled, onToggleWidget, onOpenTrustLogic, onReplayTutorial
 }) {
     const isOverBudget = budgetPct > 100;
 
     return (
         <>
+            {/* Widget Toggle - Topmost */}
+            <div className="widget-toggle-card">
+                <div className="widget-toggle-info">
+                    <div className="widget-toggle-icon">
+                        <i className="fas fa-bolt"></i>
+                    </div>
+                    <div className="widget-toggle-text">
+                        <h4>Quick Add Widget</h4>
+                        <p>Floating shortcut to add expenses fast</p>
+                    </div>
+                </div>
+                <label className="widget-toggle-switch">
+                    <input
+                        type="checkbox"
+                        checked={!!widgetEnabled}
+                        onChange={(e) => onToggleWidget?.(e.target.checked)}
+                    />
+                    <span className="widget-toggle-slider"></span>
+                </label>
+            </div>
+
             {/* Savio Note Banner */}
             <div className="savio-note-banner">
-                <div className="savio-note-top">
+                <div className="savio-note-row">
                     <div className="savio-note-icon">
                         <i className="fas fa-robot"></i>
                     </div>
-                    <button className="savio-replay-btn" title="Replay">
+                    <div className="savio-note-content">
+                        <span className="savio-note-label">Savio note</span>
+                        <p className="savio-note-text">"{aiComment || 'Loading...'}"</p>
+                    </div>
+                    <button className="savio-replay-btn" onClick={onReplayTutorial} title="Replay Tutorial">
                         Replay <i className="fas fa-play-circle"></i>
                     </button>
-                </div>
-                <div className="savio-note-content">
-                    <span className="savio-note-label">Savio note</span>
-                    <p className="savio-note-text">"{aiComment || 'Loading...'}"</p>
                 </div>
             </div>
 
@@ -33,8 +54,13 @@ export default function OverviewTab({
                 <div className="stat-card stat-card-dark">
                     <div className="stat-card-header">
                         <span className="stat-card-label">BALANCE SCORE</span>
-                        <div className="stat-card-icon-circle">
-                            <i className="fas fa-chart-line"></i>
+                        <div className="stat-card-header-right">
+                            <button className="stat-info-btn" onClick={onOpenTrustLogic} title="How scores are calculated">
+                                <i className="fas fa-info-circle"></i>
+                            </button>
+                            <div className="stat-card-icon-circle">
+                                <i className="fas fa-chart-line"></i>
+                            </div>
                         </div>
                     </div>
                     <div className="stat-card-value-large">{balanceScore}</div>
@@ -52,13 +78,13 @@ export default function OverviewTab({
                     <div className="stat-card-value-large" style={{ color: 'var(--color-obsidian)' }}>{tier || 'Bronze'}</div>
                 </div>
 
-                {/* Global Rank Card - Orange border */}
+                {/* Global Rank Card - Green */}
                 <div className="stat-card stat-card-rank">
                     <div className="stat-card-icon-top">
-                        <i className="fas fa-award" style={{ color: '#D4AF37' }}></i>
+                        <i className="fas fa-award" style={{ color: '#fff' }}></i>
                     </div>
                     <span className="stat-card-label">GLOBAL RANK</span>
-                    <div className="stat-card-value-large" style={{ color: 'var(--color-obsidian)' }}>
+                    <div className="stat-card-value-large">
                         {currentRank > 0 ? `#${currentRank}` : '#--'}
                     </div>
                 </div>
@@ -74,7 +100,10 @@ export default function OverviewTab({
                             <i className="fas fa-university"></i>
                         </div>
                     </div>
-                    <div className="friends-grid" id="friendsList">
+                    <div className="friends-grid" id="friendsList"
+                        onTouchStart={(e) => e.stopPropagation()}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                    >
                         {/* Add Friend button */}
                         <div className="friend-item" onClick={onOpenInvite}>
                             <button className="add-friend-btn" title="Invite Friend">+</button>
@@ -83,7 +112,6 @@ export default function OverviewTab({
 
                         {friends.map((friend, idx) => {
                             const friendAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.full_name)}&background=0D9488&color=fff&size=100`;
-                            const initials = friend.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                             return (
                                 <div className="friend-item" key={idx}>
                                     <img src={friendAvatarUrl} alt={friend.full_name} className="friend-avatar" />
@@ -143,27 +171,6 @@ export default function OverviewTab({
                         </span>
                     </div>
                 </div>
-            </div>
-
-            {/* Widget Toggle */}
-            <div className="widget-toggle-card">
-                <div className="widget-toggle-info">
-                    <div className="widget-toggle-icon">
-                        <i className="fas fa-bolt"></i>
-                    </div>
-                    <div className="widget-toggle-text">
-                        <h4>Quick Add Widget</h4>
-                        <p>Floating shortcut to add expenses fast</p>
-                    </div>
-                </div>
-                <label className="widget-toggle-switch">
-                    <input
-                        type="checkbox"
-                        checked={!!widgetEnabled}
-                        onChange={(e) => onToggleWidget?.(e.target.checked)}
-                    />
-                    <span className="widget-toggle-slider"></span>
-                </label>
             </div>
 
             {/* Recent Transactions */}

@@ -107,8 +107,6 @@ export default function AnalysisTab({ expenses, currentBudget }) {
         };
     }, [pieLabels, pieData, dayLabels, dailyData]);
 
-    const budgetUsed = currentBudget > 0 ? ((totalSpent / currentBudget) * 100).toFixed(1) : 0;
-
     return (
         <div className="analysis-container" id="captureArea">
             <div className="report-header">
@@ -142,39 +140,23 @@ export default function AnalysisTab({ expenses, currentBudget }) {
 
             {/* Trend Line */}
             <div className="analysis-card-dark">
-                <h3>7-Day Spending Trend</h3>
+                <h3>SPENDING TREND (LAST 7 DAYS)</h3>
                 <div className="chart-wrapper">
                     <canvas ref={lineRef}></canvas>
                 </div>
+                <div className="trend-subtitle">Tracking daily velocity</div>
                 <div className="watermark">SAVIFY</div>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="card" style={{ marginTop: '1rem' }}>
-                <h3><i className="fas fa-info-circle" style={{ marginRight: 8, color: 'var(--color-emerald)' }}></i> Quick Stats</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
-                    <div style={{ padding: '1rem', background: 'var(--color-emerald-light)', borderRadius: 12, textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--color-stone)', marginBottom: 4 }}>Total Spent</div>
-                        <div style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--color-obsidian)' }}>₹{totalSpent.toLocaleString()}</div>
-                    </div>
-                    <div style={{ padding: '1rem', background: 'var(--color-emerald-light)', borderRadius: 12, textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--color-stone)', marginBottom: 4 }}>Budget Used</div>
-                        <div style={{ fontWeight: 700, fontSize: '1.2rem', color: budgetUsed > 100 ? '#ef4444' : 'var(--color-obsidian)' }}>{budgetUsed}%</div>
-                    </div>
-                    <div style={{ padding: '1rem', background: 'var(--color-emerald-light)', borderRadius: 12, textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--color-stone)', marginBottom: 4 }}>Categories</div>
-                        <div style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--color-obsidian)' }}>{pieLabels.length}</div>
-                    </div>
-                    <div style={{ padding: '1rem', background: 'var(--color-emerald-light)', borderRadius: 12, textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--color-stone)', marginBottom: 4 }}>Transactions</div>
-                        <div style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--color-obsidian)' }}>{filteredExpenses.length}</div>
-                    </div>
-                </div>
             </div>
 
             <div className="timestamp-tag" id="chartLastUpdate">
                 Updated: {new Date().toLocaleTimeString()}
             </div>
+
+            <footer className="app-footer">
+                <p>&copy; 2026 Savify. All rights reserved.</p>
+                <p><i className="fas fa-code"></i> Made with ❤️ by IIT KGP Students</p>
+                <p style={{ fontSize: '0.65rem', opacity: 0.7, marginTop: 5 }}>* Comments are AI generated</p>
+            </footer>
         </div>
     );
 }
