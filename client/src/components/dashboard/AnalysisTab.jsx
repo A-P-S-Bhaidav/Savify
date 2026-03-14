@@ -110,11 +110,8 @@ export default function AnalysisTab({ expenses, currentBudget }) {
     return (
         <div className="analysis-container" id="captureArea">
             <div className="report-header">
-                <h2 style={{ fontFamily: 'var(--font-secondary)' }}>
-                    <i className="fas fa-chart-pie" style={{ marginRight: 10, color: 'var(--color-gold)' }}></i>
-                    Spending Analysis
-                </h2>
-                <button className="download-btn" onClick={() => {
+                <h2 className="spending-report-title">Spending Report</h2>
+                <button className="detailed-analysis-btn" onClick={() => {
                     if (typeof window.html2canvas !== 'undefined') {
                         window.html2canvas(document.getElementById('captureArea'), { backgroundColor: null, scale: 2 }).then(canvas => {
                             const link = document.createElement('a');
@@ -124,13 +121,13 @@ export default function AnalysisTab({ expenses, currentBudget }) {
                         });
                     }
                 }}>
-                    <i className="fas fa-download"></i> Download Report
+                    <i className="fas fa-download"></i> Detailed Analysis
                 </button>
             </div>
 
             {/* Pie Chart */}
             <div className="analysis-card-dark">
-                <h3>Spending Breakdown</h3>
+                <h3>Expense Breakdown</h3>
                 <div className="chart-wrapper">
                     <canvas ref={pieRef}></canvas>
                 </div>
@@ -147,7 +144,7 @@ export default function AnalysisTab({ expenses, currentBudget }) {
                         );
                     })}
                 </div>
-                <div className="watermark">Savify</div>
+                <div className="watermark">SAVIFY</div>
             </div>
 
             {/* Trend Line */}
@@ -156,7 +153,7 @@ export default function AnalysisTab({ expenses, currentBudget }) {
                 <div className="chart-wrapper">
                     <canvas ref={lineRef}></canvas>
                 </div>
-                <div className="watermark">Savify</div>
+                <div className="watermark">SAVIFY</div>
             </div>
 
             {/* Quick Stats */}

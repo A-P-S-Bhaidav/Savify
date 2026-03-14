@@ -17,32 +17,39 @@ export default function LandingPage() {
         const closeMenu = () => mobileNav?.classList.remove('active');
         navLinks.forEach(link => link.addEventListener('click', closeMenu));
 
-        // Handle fade-in animations
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
+        // Handle fade-in animations - robustly for React StrictMode
+        const fadeElements = document.querySelectorAll('.fade-in');
+        let observer = null;
 
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
+        if (fadeElements.length > 0) {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.05
+            };
+
+            observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            fadeElements.forEach(element => {
+                observer.observe(element);
             });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(element => {
-            observer.observe(element);
-        });
+        }
 
         return () => {
             if (mobileMenuBtn) {
                 mobileMenuBtn.removeEventListener('click', toggleMenu);
             }
             navLinks.forEach(link => link.removeEventListener('click', closeMenu));
-            observer.disconnect();
+            if (observer) {
+                observer.disconnect();
+            }
         };
     }, []);
 

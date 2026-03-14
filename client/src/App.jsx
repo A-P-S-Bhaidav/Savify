@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
+import { useEffect } from 'react';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
@@ -24,6 +25,16 @@ import TermsPage from './pages/TermsPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
 import ExtraPolicyPage from './pages/ExtraPolicyPage';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) {
@@ -38,31 +49,34 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-      <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/features" element={<FeaturesPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/feedback" element={<FeedbackPage />} />
-      <Route path="/waitlist" element={<WaitlistPage />} />
-      <Route path="/analysis" element={<AnalysisPage />} />
-      <Route path="/balance-score" element={<BalanceScorePage />} />
-      <Route path="/broke" element={<BrokePage />} />
-      <Route path="/challenge" element={<ChallengePage />} />
-      <Route path="/competition" element={<CompetitionPage />} />
-      <Route path="/leaderboard" element={<LeaderboardPage />} />
-      <Route path="/reality" element={<RealityPage />} />
-      <Route path="/something" element={<SomethingPage />} />
-      <Route path="/status-tiers" element={<StatusTiersPage />} />
-      <Route path="/timer" element={<TimerPage />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-      <Route path="/terms-and-conditions" element={<TermsPage />} />
-      <Route path="/refund-policy" element={<RefundPolicyPage />} />
-      <Route path="/extra-policy" element={<ExtraPolicyPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="/waitlist" element={<WaitlistPage />} />
+        <Route path="/analysis" element={<AnalysisPage />} />
+        <Route path="/balance-score" element={<BalanceScorePage />} />
+        <Route path="/broke" element={<BrokePage />} />
+        <Route path="/challenge" element={<ChallengePage />} />
+        <Route path="/competition" element={<CompetitionPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/reality" element={<RealityPage />} />
+        <Route path="/something" element={<SomethingPage />} />
+        <Route path="/status-tiers" element={<StatusTiersPage />} />
+        <Route path="/timer" element={<TimerPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-and-conditions" element={<TermsPage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
+        <Route path="/extra-policy" element={<ExtraPolicyPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
-};
+}

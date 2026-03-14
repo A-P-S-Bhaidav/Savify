@@ -55,27 +55,38 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     useEffect(() => {
         const onMove = (e) => {
             if (!isDragging.current) return;
-            e.preventDefault?.();
             const clientX = e.clientX ?? e.touches?.[0]?.clientX;
             const clientY = e.clientY ?? e.touches?.[0]?.clientY;
             if (clientX == null) return;
+
             const dx = clientX - startPoint.current.x;
             const dy = clientY - startPoint.current.y;
-            if (Math.abs(dx) > 10 || Math.abs(dy) > 10) hasMoved.current = true;
+
+            // Only consider it a drag if moved more than 5px
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                hasMoved.current = true;
+                e.preventDefault?.(); // Prevent scrolling only if actually dragging
+            }
+
             const newPos = { x: startPos.current.x + dx, y: startPos.current.y + dy };
             setFabPos(newPos);
         };
 
-        const onEnd = () => {
+        const onEnd = (e) => {
             if (!isDragging.current) return;
             isDragging.current = false;
+
             setFabPos(prev => {
                 snapToEdge(prev);
                 return prev;
             });
+
             if (!hasMoved.current) {
-                setIsOpen(prev => !prev);
+                // If it was just a tap and not a drag, toggle open state
+                // Use a short timeout to avoid touch/click collision on some devices
+                setTimeout(() => setIsOpen(prev => !prev), 10);
             }
+            hasMoved.current = false; // Reset for next interaction
         };
 
         window.addEventListener('mousemove', onMove);

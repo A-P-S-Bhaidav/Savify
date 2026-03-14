@@ -4,52 +4,72 @@ export default function ProfileTab({
     onEdit, onLogout
 }) {
     return (
-        <div>
-            {/* Profile Header */}
+        <div className="profile-container">
+            {/* Profile Card */}
             <div className="profile-header-card">
-                <img src={avatarUrl} alt="Profile" className="profile-avatar" />
+                <div className="profile-avatar-wrapper">
+                    <img src={avatarUrl} alt="Profile" className="profile-avatar" />
+                </div>
                 <h2 id="profileName">{appData?.full_name || 'User'}</h2>
-                <p style={{ color: '#999', fontSize: '0.9rem' }} id="profileEmail">{user?.email || ''}</p>
+                <p className="profile-email" id="profileEmail">{user?.email || ''}</p>
+                <span className="profile-tier-badge">{tier || 'Bronze'} Tier</span>
+            </div>
 
-                <div className="profile-stats">
-                    <div className="stat-box">
-                        <div className="stat-value" style={{ color: '#10B981' }} id="profileScore">{balanceScore}</div>
-                        <div className="stat-label">Balance Score</div>
+            {/* Verified Student Build Card */}
+            <div className="verified-build-card">
+                <div className="verified-build-left">
+                    <div className="verified-shield">
+                        <i className="fas fa-shield-alt"></i>
                     </div>
-                    <div className="stat-box">
-                        <div className="stat-value" style={{ color: '#D4AF37' }} id="profileRank">
-                            {currentRank > 0 ? `#${currentRank}` : '#--'}
+                    <div className="verified-build-info">
+                        <h3>Verified Student Build</h3>
+                        <p>Developed by students of <strong>IIT Kharagpur</strong>.</p>
+                        <div className="verified-badges">
+                            <span className="verified-badge green">
+                                <i className="fas fa-check-circle"></i> Malware Free
+                            </span>
+                            <span className="verified-badge blue">
+                                <i className="fas fa-code"></i> Verified Source
+                            </span>
                         </div>
-                        <div className="stat-label">Campus Rank</div>
                     </div>
-                    <div className="stat-box">
-                        <div className="stat-value" id="profileTier">{tier} Tier</div>
-                        <div className="stat-label">Status Tier</div>
+                </div>
+                <button className="verified-delete-btn" title="Dismiss">
+                    <i className="fas fa-trash-alt"></i>
+                </button>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="profile-stats-grid">
+                <div className="profile-stat-item">
+                    <div className="profile-stat-value" id="profileScore">{balanceScore}</div>
+                    <div className="profile-stat-label">BALANCE SCORE</div>
+                </div>
+                <div className="profile-stat-item">
+                    <div className="profile-stat-value" id="profileRank">
+                        {currentRank > 0 ? `#${currentRank}` : '#--'}
                     </div>
-                    <div className="stat-box">
-                        <div className="stat-value" id="profileBudget">₹{currentBudget}</div>
-                        <div className="stat-label">Weekly Budget</div>
-                    </div>
+                    <div className="profile-stat-label">GLOBAL RANK</div>
+                </div>
+                <div className="profile-stat-item">
+                    <div className="profile-stat-value" id="profileBudget">₹{currentBudget.toLocaleString()}</div>
+                    <div className="profile-stat-label">WEEKLY BUDGET</div>
+                </div>
+                <div className="profile-stat-item">
+                    <div className="profile-stat-value" id="profileSpent">₹{currentSpending.toLocaleString()}</div>
+                    <div className="profile-stat-label">SPENT</div>
                 </div>
             </div>
 
-            {/* Profile Details */}
-            <div className="profile-grid">
-                <div className="profile-item">
+            {/* Info Cards */}
+            <div className="profile-info-cards">
+                <div className="profile-info-item">
                     <h4><i className="fas fa-university"></i> College</h4>
                     <p id="profileCollege">{appData?.college || 'N/A'}</p>
                 </div>
-                <div className="profile-item">
-                    <h4><i className="fas fa-map-marker-alt"></i> From</h4>
+                <div className="profile-info-item">
+                    <h4><i className="fas fa-map-marker-alt"></i> Native Place</h4>
                     <p id="profileNativePlace">{appData?.native_place || 'N/A'}</p>
-                </div>
-                <div className="profile-item">
-                    <h4><i className="fas fa-money-bill-wave"></i> Spent This Week</h4>
-                    <p id="profileSpent">₹{currentSpending}</p>
-                </div>
-                <div className="profile-item">
-                    <h4><i className="fas fa-medal"></i> Tier Rating</h4>
-                    <p id="tierRating">{tier}</p>
                 </div>
             </div>
 
@@ -65,7 +85,7 @@ export default function ProfileTab({
                     {appData?.edit_req_status === false ? 'Edit Pending' : 'Edit Profile'}
                 </button>
                 <button className="profile-btn logout-danger" onClick={onLogout}>
-                    <i className="fas fa-sign-out-alt"></i> Logout
+                    <i className="fas fa-sign-out-alt"></i> Sign Out
                 </button>
             </div>
         </div>

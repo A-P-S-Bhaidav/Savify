@@ -287,6 +287,7 @@ export default function DashboardPage() {
                     appData={appData}
                     activeTab={activeTab}
                     onTabChange={switchTab}
+                    onOpenSupport={() => openModal('support')}
                     avatarUrl={avatarUrl}
                 />
 
@@ -315,13 +316,10 @@ export default function DashboardPage() {
                             friendsLoading={friendsLoading}
                             hasMoreFriends={hasMore}
                             appData={appData}
-                            hallIdentities={hallIdentities}
                             onAddExpense={() => openModal('expense')}
                             onOpenInvite={() => openModal('invite')}
                             onOpenEdit={() => openModal('edit')}
-                            onOpenHowItWorks={() => openModal('howItWorks')}
                             onLoadMoreFriends={() => appData?.college && fetchFriends(appData.college, true)}
-                            user={user}
                             widgetEnabled={widgetEnabled}
                             onToggleWidget={(val) => { setWidgetEnabled(val); localStorage.setItem('savify_widget_enabled', val ? 'true' : 'false'); }}
                         />
