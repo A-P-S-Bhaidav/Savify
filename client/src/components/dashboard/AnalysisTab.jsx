@@ -1,10 +1,12 @@
 import { useEffect, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Chart, ArcElement, PieController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js';
 import { chartColors, APP_START_DATE } from '../../utils/helpers';
 
 Chart.register(ArcElement, PieController, LineController, LineElement, PointElement, CategoryScale, LinearScale, Filler, Tooltip);
 
 export default function AnalysisTab({ expenses, currentBudget }) {
+    const navigate = useNavigate();
     const pieRef = useRef(null);
     const lineRef = useRef(null);
     const pieChartRef = useRef(null);
@@ -111,17 +113,8 @@ export default function AnalysisTab({ expenses, currentBudget }) {
         <div className="analysis-container" id="captureArea">
             <div className="report-header">
                 <h2 className="spending-report-title">Spending Report</h2>
-                <button className="detailed-analysis-btn" onClick={() => {
-                    if (typeof window.html2canvas !== 'undefined') {
-                        window.html2canvas(document.getElementById('captureArea'), { backgroundColor: null, scale: 2 }).then(canvas => {
-                            const link = document.createElement('a');
-                            link.download = `Savify-Report-${Date.now()}.png`;
-                            link.href = canvas.toDataURL('image/png');
-                            link.click();
-                        });
-                    }
-                }}>
-                    <i className="fas fa-download"></i> Detailed Analysis
+                <button className="detailed-analysis-btn" onClick={() => navigate('/deep-dive')}>
+                    <i className="fas fa-chart-bar"></i> Detailed Analysis
                 </button>
             </div>
 

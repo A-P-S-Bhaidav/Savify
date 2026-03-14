@@ -31,12 +31,12 @@ export default function Header({ appData, onHelp, onAddExpense }) {
                 <p className="welcome-subtitle">Monitoring your progress.</p>
             </div>
             <div className="header-actions">
-                <button className="icon-btn help-btn" onClick={onHelp} title="How It Works">
-                    <i className="fas fa-question"></i>
+                <button className="icon-btn help-btn" onClick={onHelp} title="Help & Support">
+                    <i className="fas fa-headset"></i>
                 </button>
 
-                <button className="unwrapped-btn" onClick={() => window.open('/unwrapped', '_blank')}>
-                    <i className="fas fa-gift"></i> Unwrapped
+                <button className="generating-pill" onClick={() => window.open('/unwrapped', '_blank')}>
+                    <i className="fas fa-circle-notch fa-spin"></i> Generating...
                 </button>
 
                 {!isInstalled && deferredPrompt && (

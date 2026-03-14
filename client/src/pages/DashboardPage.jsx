@@ -24,6 +24,7 @@ import FeedbackModal from '../components/modals/FeedbackModal';
 import HowItWorksModal from '../components/modals/HowItWorksModal';
 import OnboardingForm from '../components/onboarding/OnboardingForm';
 import QuickAddWidget from '../components/widget/QuickAddWidget';
+import TutorialOverlay from '../components/tutorial/TutorialOverlay';
 import '../styles/dashboard.css';
 
 export default function DashboardPage() {
@@ -45,6 +46,8 @@ export default function DashboardPage() {
         const saved = localStorage.getItem('savify_widget_enabled');
         return saved === null ? true : saved === 'true'; // default ON
     });
+    const [showTutorial, setShowTutorial] = useState(false);
+    const [showSwipeHint, setShowSwipeHint] = useState(false);
 
     // Modal states
     const [modals, setModals] = useState({
@@ -159,6 +162,18 @@ export default function DashboardPage() {
                 // Check action param
                 if (searchParams.get('action') === 'add') {
                     setTimeout(() => openModal('expense'), 1000);
+                }
+
+                // Show tutorial for first-time users
+                const tutorialDone = localStorage.getItem('savify_tutorial_done');
+                if (!tutorialDone) {
+                    setTimeout(() => setShowTutorial(true), 1500);
+                }
+
+                // Show swipe hint on mobile
+                if (window.innerWidth <= 768) {
+                    setShowSwipeHint(true);
+                    setTimeout(() => setShowSwipeHint(false), 4000);
                 }
             } catch (e) {
                 console.error('Init Error:', e);
@@ -384,6 +399,21 @@ export default function DashboardPage() {
                     <div key={tab} className={`dot ${activeTab === tab ? 'active' : ''}`}></div>
                 ))}
             </div>
+
+            {/* Swipe hint pill */}
+            {showSwipeHint && (
+                <div className="swipe-hint-pill">
+                    Swipe <span>↔</span> to navigate
+                </div>
+            )}
+
+            {/* Tutorial */}
+            {showTutorial && (
+                <TutorialOverlay
+                    onComplete={() => setShowTutorial(false)}
+                    onOpenExpense={() => openModal('expense')}
+                />
+            )}
 
             {/* Modals */}
             <ExpenseModal

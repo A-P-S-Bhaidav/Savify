@@ -13,18 +13,18 @@ export default function OverviewTab({
         <>
             {/* Savio Note Banner */}
             <div className="savio-note-banner">
-                <div className="savio-note-left">
+                <div className="savio-note-top">
                     <div className="savio-note-icon">
-                        <i className="fas fa-landmark"></i>
+                        <i className="fas fa-robot"></i>
                     </div>
-                    <div className="savio-note-content">
-                        <span className="savio-note-label">Savio note</span>
-                        <p className="savio-note-text">"{aiComment || 'Loading...'}"</p>
-                    </div>
+                    <button className="savio-replay-btn" title="Replay">
+                        Replay <i className="fas fa-play-circle"></i>
+                    </button>
                 </div>
-                <button className="savio-replay-btn" title="Replay">
-                    Replay <i className="fas fa-play-circle"></i>
-                </button>
+                <div className="savio-note-content">
+                    <span className="savio-note-label">Savio note</span>
+                    <p className="savio-note-text">"{aiComment || 'Loading...'}"</p>
+                </div>
             </div>
 
             {/* Stats Cards Row */}
@@ -70,9 +70,9 @@ export default function OverviewTab({
                 <div className="campus-mates-card">
                     <div className="campus-mates-header">
                         <h3>CAMPUS MATES ({appData?.college?.toUpperCase() || 'IIT KHARAGPUR'})</h3>
-                        <button className="campus-manage-btn" onClick={onOpenInvite} title="Manage">
-                            <i className="fas fa-trash-alt"></i>
-                        </button>
+                        <div className="campus-manage-icon" title="Campus">
+                            <i className="fas fa-university"></i>
+                        </div>
                     </div>
                     <div className="friends-grid" id="friendsList">
                         {/* Add Friend button */}
