@@ -14,9 +14,27 @@ export default function OnboardingForm({ user, onComplete }) {
 
     const colleges = ['IIT Kharagpur'];
     const halls = [
-        'RK Hall', 'RP Hall', 'MS Hall', 'Patel Hall', 'Azad Hall', 'Nehru Hall',
-        'Ashutosh Mukherjee Hall', 'BC Roy Hall', 'BR Ambedkar Hall', 'Gokhale Hall',
-        'Mother Teressa Hall', 'Rani Laxmi Bai Hall', 'SNVH', 'SNIG Hall', 'Zakir Hussain Hall'
+        'Sir Ashutosh Mukherjee Hall',
+        'Azad Hall of Residence',
+        'B C Roy Hall of Residence',
+        'B R Ambedkar Hall of Residence',
+        'Gokhale Hall of Residence',
+        'Homi J Bhabha Hall of Residence',
+        'Jagadish Chandra Bose Hall of Residence',
+        'Lal Bahadur Shastri Hall of Residence',
+        'Lala Lajpat Rai Hall of Residence',
+        'Madan Mohan Malviya Hall of Residence',
+        'Meghnad Saha Hall of Residence',
+        'Mother Teresa Hall of Residence',
+        'Nehru Hall of Residence',
+        'Patel Hall of Residence',
+        'Radha Krishnan Hall of Residence',
+        'Rani Laxmibai Hall of Residence',
+        'Rajendra Prasad Hall of Residence',
+        'Sarojini Naidu - Indira Gandhi Hall of Residence',
+        'Sister Nivedita Hall of Residence',
+        'Vidyasagar Hall of Residence',
+        'Zakir Hussain Hall of Residence'
     ];
 
     const handleSubmit = async () => {
