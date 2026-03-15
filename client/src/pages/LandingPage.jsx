@@ -50,10 +50,10 @@ export default function LandingPage() {
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3.5 + 1.2; // Made particles larger
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.3;
-                this.opacity = Math.random() * 0.5 + 0.3; // Much higher base opacity
+                this.size = Math.random() * 4.5 + 1.5; // Even larger particles
+                this.speedX = (Math.random() - 0.5) * 0.7;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.6 + 0.4; // Very high base opacity
                 this.hue = 145 + Math.random() * 20;
             }
             update() {
@@ -67,18 +67,18 @@ export default function LandingPage() {
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                const repelRadius = 200; // Increased repel radius
+                const repelRadius = 250; // Huge repel radius
 
                 if (distance < repelRadius) {
                     const force = (repelRadius - distance) / repelRadius;
                     const angle = Math.atan2(dy, dx);
-                    // Move away from mouse
-                    this.x -= Math.cos(angle) * force * 7; // Faster repulsion
-                    this.y -= Math.sin(angle) * force * 7;
+                    // Move away from mouse fast
+                    this.x -= Math.cos(angle) * force * 10;
+                    this.y -= Math.sin(angle) * force * 10;
                 }
 
-                this.opacity += (Math.random() - 0.5) * 0.01;
-                this.opacity = Math.max(0.3, Math.min(0.9, this.opacity)); // Capped much higher
+                this.opacity += (Math.random() - 0.5) * 0.02;
+                this.opacity = Math.max(0.4, Math.min(1.0, this.opacity)); // Capped at 1.0
             }
             draw() {
                 ctx.beginPath();
@@ -92,8 +92,8 @@ export default function LandingPage() {
             }
         }
 
-        // Intensify particle count: 1 per 10px width (max 250)
-        const count = Math.min(250, Math.floor(canvas.width / 10));
+        // Intensify particle count: 1 per 7px width (max 400)
+        const count = Math.min(400, Math.floor(canvas.width / 7));
         for (let i = 0; i < count; i++) particles.push(new Particle());
 
         const drawLines = () => {
