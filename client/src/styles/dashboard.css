@@ -264,12 +264,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0.5rem;
+    padding: 0 1rem;
     height: 100%;
 }
 
 .header-logo {
-    display: flex;
+    display: none;
+    /* Hidden on desktop, sidebar has logo */
     align-items: center;
     gap: 0.5rem;
 }
@@ -2275,6 +2276,10 @@
     .glass-header {
         left: 0;
         height: 56px;
+    }
+
+    .header-logo {
+        display: flex;
     }
 
     .header-logo-img {

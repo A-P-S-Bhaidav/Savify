@@ -21,6 +21,30 @@ export default function LandingPage() {
         resize();
         window.addEventListener('resize', resize);
 
+        // Mouse iteration
+        let mouse = { x: -1000, y: -1000 };
+        const handleMouseMove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        };
+        const handleMouseLeave = () => {
+            mouse.x = -1000;
+            mouse.y = -1000;
+        };
+        const handleTouchMove = (e) => {
+            if (e.touches.length > 0) {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.touches[0].clientX - rect.left;
+                mouse.y = e.touches[0].clientY - rect.top;
+            }
+        };
+
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseleave', handleMouseLeave);
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+        canvas.addEventListener('touchend', handleMouseLeave);
+
         class Particle {
             constructor() { this.reset(); }
             reset() {
@@ -33,12 +57,28 @@ export default function LandingPage() {
                 this.hue = 145 + Math.random() * 20;
             }
             update() {
+                // Bounce off edges
                 this.x += this.speedX;
                 this.y += this.speedY;
                 if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                // Mouse repel effect
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const repelRadius = 160;
+
+                if (distance < repelRadius) {
+                    const force = (repelRadius - distance) / repelRadius;
+                    const angle = Math.atan2(dy, dx);
+                    // Move away from mouse
+                    this.x -= Math.cos(angle) * force * 5;
+                    this.y -= Math.sin(angle) * force * 5;
+                }
+
                 this.opacity += (Math.random() - 0.5) * 0.01;
-                this.opacity = Math.max(0.08, Math.min(0.45, this.opacity));
+                this.opacity = Math.max(0.1, Math.min(0.6, this.opacity));
             }
             draw() {
                 ctx.beginPath();
@@ -52,7 +92,8 @@ export default function LandingPage() {
             }
         }
 
-        const count = Math.min(50, Math.floor(canvas.width / 25));
+        // Intensify particle count: 1 per 15px width (max 150)
+        const count = Math.min(150, Math.floor(canvas.width / 15));
         for (let i = 0; i < count; i++) particles.push(new Particle());
 
         const drawLines = () => {
@@ -84,6 +125,10 @@ export default function LandingPage() {
         return () => {
             cancelAnimationFrame(animId);
             window.removeEventListener('resize', resize);
+            canvas.removeEventListener('mousemove', handleMouseMove);
+            canvas.removeEventListener('mouseleave', handleMouseLeave);
+            canvas.removeEventListener('touchmove', handleTouchMove);
+            canvas.removeEventListener('touchend', handleMouseLeave);
         };
     }, []);
 
