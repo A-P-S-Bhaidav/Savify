@@ -188,7 +188,7 @@ export default function OverviewTab({
             <div className="transactions-card">
                 <div className="transactions-header">
                     <h2 className="transactions-title">Recent Transactions</h2>
-                    <button className="add-expense-btn" onClick={onAddExpense}>
+                    <button className="add-expense-btn hide-on-mobile" onClick={onAddExpense}>
                         <i className="fas fa-plus"></i> Add Expense
                     </button>
                 </div>

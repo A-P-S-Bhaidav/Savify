@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const SAVIFY_LOGO = 'https://i.ibb.co/v441FQJ1/gemini-2-5-flash-image-Refine-this-Savify-S-logo-to-be-flatter-more-geometric-and-ultra-premium.png';
 
@@ -31,18 +32,15 @@ export default function Header({ onHelp }) {
             {/* Subtle animated shimmer line at bottom */}
             <div className="header-shimmer"></div>
             <div className="header-inner">
-                <div className="header-logo">
+                <Link to="/" className="header-logo" style={{ textDecoration: 'none' }}>
                     <img src={SAVIFY_LOGO} alt="Savify" className="header-logo-img" />
                     <span className="header-logo-text">Savify</span>
-                </div>
+                </Link>
                 <div className="header-actions">
                     <button className="icon-btn help-btn" onClick={onHelp} title="How to use Savify">
                         <i className="fas fa-question-circle"></i>
                     </button>
-                    <button className="unwrapped-btn" onClick={() => window.open('/unwrapped', '_blank')}>
-                        <i className="fas fa-gift"></i>
-                        <span>Unwrapped</span>
-                    </button>
+
                     {!isInstalled ? (
                         <button className="install-app-btn" onClick={handleInstall}>
                             <i className="fas fa-download"></i>

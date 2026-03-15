@@ -2140,8 +2140,7 @@
     display: none;
     position: fixed;
     bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-    left: 50%;
-    transform: translateX(-50%);
+    right: var(--space-lg);
     background: var(--color-obsidian);
     color: white;
     border: none;
@@ -2159,7 +2158,7 @@
 }
 
 .mobile-fab:active {
-    transform: translateX(-50%) scale(0.95);
+    transform: scale(0.95);
 }
 
 .mobile-fab span {
@@ -2320,6 +2319,10 @@
 
     .mobile-only-hint {
         display: block !important;
+    }
+
+    .hide-on-mobile {
+        display: none !important;
     }
 
     .swipe-hint {
