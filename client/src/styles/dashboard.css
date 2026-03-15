@@ -269,8 +269,7 @@
 }
 
 .header-logo {
-    display: none;
-    /* Hidden on desktop, sidebar has logo */
+    display: flex;
     align-items: center;
     gap: 0.5rem;
 }

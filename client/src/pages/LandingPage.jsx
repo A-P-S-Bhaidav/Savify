@@ -40,10 +40,10 @@ export default function LandingPage() {
             }
         };
 
-        canvas.addEventListener('mousemove', handleMouseMove);
-        canvas.addEventListener('mouseleave', handleMouseLeave);
-        canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
-        canvas.addEventListener('touchend', handleMouseLeave);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseleave', handleMouseLeave);
+        window.addEventListener('touchmove', handleTouchMove, { passive: true });
+        window.addEventListener('touchend', handleMouseLeave);
 
         class Particle {
             constructor() { this.reset(); }
@@ -125,10 +125,10 @@ export default function LandingPage() {
         return () => {
             cancelAnimationFrame(animId);
             window.removeEventListener('resize', resize);
-            canvas.removeEventListener('mousemove', handleMouseMove);
-            canvas.removeEventListener('mouseleave', handleMouseLeave);
-            canvas.removeEventListener('touchmove', handleTouchMove);
-            canvas.removeEventListener('touchend', handleMouseLeave);
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseleave', handleMouseLeave);
+            window.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('touchend', handleMouseLeave);
         };
     }, []);
 
