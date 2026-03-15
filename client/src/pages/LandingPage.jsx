@@ -88,19 +88,6 @@ export default function LandingPage() {
     }, []);
 
     useEffect(() => {
-        // Handle mobile menu
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileNav = document.getElementById('mobileNav');
-
-        const toggleMenu = () => mobileNav?.classList.toggle('active');
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', toggleMenu);
-        }
-
-        const navLinks = document.querySelectorAll('.mobile-nav .nav-link');
-        const closeMenu = () => mobileNav?.classList.remove('active');
-        navLinks.forEach(link => link.addEventListener('click', closeMenu));
-
         // Handle fade-in animations
         const fadeElements = document.querySelectorAll('.fade-in');
         let observer = null;
@@ -173,10 +160,6 @@ export default function LandingPage() {
         }
 
         return () => {
-            if (mobileMenuBtn) {
-                mobileMenuBtn.removeEventListener('click', toggleMenu);
-            }
-            navLinks.forEach(link => link.removeEventListener('click', closeMenu));
             if (observer) {
                 observer.disconnect();
             }
@@ -205,31 +188,14 @@ export default function LandingPage() {
                                 <a href="#competition" className="nav-link">Competition</a>
                                 <a href="#status" className="nav-link">Levels</a>
                             </div>
-                            <div className="auth-buttons">
-                                <Link to="/login" className="btn btn-auth btn-login">Log in</Link>
-                                <Link to="/login" className="btn btn-auth btn-signup">Get Started</Link>
-                            </div>
                         </nav>
-                        <button className="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                            <i className="fas fa-bars"></i>
-                        </button>
+                        <div className="auth-buttons">
+                            <Link to="/login" className="btn btn-auth btn-login">Log in</Link>
+                            <Link to="/login" className="btn btn-auth btn-signup">Get Started</Link>
+                        </div>
                     </div>
                 </div>
             </header>
-
-            <div className="mobile-nav" id="mobileNav">
-                <div className="nav-links">
-                    <a href="#insight" className="nav-link">Concept</a>
-                    <a href="#howitworks" className="nav-link">Process</a>
-                    <a href="#balance" className="nav-link">Score</a>
-                    <a href="#competition" className="nav-link">Competition</a>
-                    <a href="#status" className="nav-link">Levels</a>
-                </div>
-                <div className="auth-buttons">
-                    <Link to="/login" className="btn btn-auth btn-login">Log in</Link>
-                    <Link to="/login" className="btn btn-auth btn-signup">Get Started</Link>
-                </div>
-            </div>
 
             <section className="hero section">
                 <div className="hero-background">

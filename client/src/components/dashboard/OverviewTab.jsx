@@ -27,6 +27,9 @@ export default function OverviewTab({
                     <div className="widget-toggle-text">
                         <h4>Quick Add Widget</h4>
                         <p>Floating shortcut to add expenses fast</p>
+                        <p className="mobile-only-hint" style={{ color: 'var(--color-emerald)', fontSize: '0.7rem', marginTop: '4px', fontWeight: '600' }}>
+                            <i className="fas fa-hand-pointer"></i> Touch & hold widget to open
+                        </p>
                     </div>
                 </div>
                 <label className="widget-toggle-switch">
