@@ -14,6 +14,7 @@ const CATEGORIES = [
 ];
 
 const VISIBLE_COUNT = 3;
+const ARC_RADIUS = 95; // px from center of FAB
 
 export default function QuickAddWidget({ user, addExpense, currentBudget, currentSpending, fetchScoreAndRank, fetchHistory, fetchExpenses }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -21,11 +22,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     const [amount, setAmount] = useState('');
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
-
-    // Carousel state
-    const [carouselIndex, setCarouselIndex] = useState(0);
-    const carouselRef = useRef(null);
-    const spinStartY = useRef(null);
+    const [rotationIndex, setRotationIndex] = useState(0);
 
     // Position state
     const [fabPos, setFabPos] = useState(() => {
@@ -42,10 +39,13 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     const startPos = useRef({ x: 0, y: 0 });
     const amountInputRef = useRef(null);
     const rafRef = useRef(null);
+    const spinStartAngle = useRef(null);
+
+    const isOnLeft = fabPos.x < window.innerWidth / 2;
+    const fabSize = 60;
 
     // Snap to edge
     const snapToEdge = useCallback((currentPos) => {
-        const fabSize = 60;
         const margin = 10;
         const midX = window.innerWidth / 2;
         const snapX = (currentPos.x + fabSize / 2) < midX
@@ -57,7 +57,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
         localStorage.setItem('savify_widget_pos', JSON.stringify(snapped));
     }, []);
 
-    // Drag handlers with rAF optimization
+    // Drag handlers with rAF
     useEffect(() => {
         const onMove = (e) => {
             if (!isDragging.current) return;
@@ -65,40 +65,30 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
             const clientX = e.clientX ?? e.touches?.[0]?.clientX;
             const clientY = e.clientY ?? e.touches?.[0]?.clientY;
             if (clientX == null) return;
-
             const dx = clientX - startPoint.current.x;
             const dy = clientY - startPoint.current.y;
-
             if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
                 hasMoved.current = true;
                 e.preventDefault?.();
             }
-
             if (hasMoved.current) {
                 if (rafRef.current) cancelAnimationFrame(rafRef.current);
                 rafRef.current = requestAnimationFrame(() => {
-                    const newPos = { x: startPos.current.x + dx, y: startPos.current.y + dy };
-                    setFabPos(newPos);
+                    setFabPos({ x: startPos.current.x + dx, y: startPos.current.y + dy });
                 });
             }
         };
-
         const onEnd = (e) => {
             if (!isDragging.current) return;
             e.stopPropagation();
             isDragging.current = false;
-
             if (hasMoved.current) {
-                setFabPos(prev => {
-                    snapToEdge(prev);
-                    return prev;
-                });
+                setFabPos(prev => { snapToEdge(prev); return prev; });
             } else {
                 setTimeout(() => setIsOpen(prev => !prev), 50);
             }
             hasMoved.current = false;
         };
-
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onEnd);
         window.addEventListener('touchmove', onMove, { passive: false });
@@ -122,43 +112,83 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
         startPos.current = { ...fabPos };
     };
 
-    // Carousel spin handlers
-    const handleCarouselTouchStart = (e) => {
+    // Spin gesture for semi-circle rotation
+    const handleArcTouchStart = (e) => {
         e.stopPropagation();
-        spinStartY.current = e.touches?.[0]?.clientY ?? e.clientY ?? 0;
+        const cx = fabPos.x + fabSize / 2;
+        const cy = fabPos.y + fabSize / 2;
+        const tx = e.touches?.[0]?.clientX ?? e.clientX;
+        const ty = e.touches?.[0]?.clientY ?? e.clientY;
+        spinStartAngle.current = Math.atan2(ty - cy, tx - cx);
     };
 
-    const handleCarouselTouchEnd = (e) => {
+    const handleArcTouchEnd = (e) => {
         e.stopPropagation();
-        if (spinStartY.current === null) return;
-        const endY = e.changedTouches?.[0]?.clientY ?? e.clientY ?? 0;
-        const diff = spinStartY.current - endY;
-        if (Math.abs(diff) > 30) {
+        if (spinStartAngle.current === null) return;
+        const cx = fabPos.x + fabSize / 2;
+        const cy = fabPos.y + fabSize / 2;
+        const tx = e.changedTouches?.[0]?.clientX ?? e.clientX;
+        const ty = e.changedTouches?.[0]?.clientY ?? e.clientY;
+        const endAngle = Math.atan2(ty - cy, tx - cx);
+        const diff = endAngle - spinStartAngle.current;
+        if (Math.abs(diff) > 0.3) {
             if (diff > 0) {
-                // Swipe up — next
-                setCarouselIndex(prev => Math.min(prev + 1, CATEGORIES.length - VISIBLE_COUNT));
+                setRotationIndex(prev => (prev + 1) % CATEGORIES.length);
             } else {
-                // Swipe down — prev
-                setCarouselIndex(prev => Math.max(prev - 1, 0));
+                setRotationIndex(prev => (prev - 1 + CATEGORIES.length) % CATEGORIES.length);
             }
         }
-        spinStartY.current = null;
+        spinStartAngle.current = null;
     };
 
-    const handleWheel = (e) => {
-        e.stopPropagation();
-        if (e.deltaY > 0) {
-            setCarouselIndex(prev => Math.min(prev + 1, CATEGORIES.length - VISIBLE_COUNT));
-        } else {
-            setCarouselIndex(prev => Math.max(prev - 1, 0));
+    // Get the 3 visible categories based on rotation
+    const getVisibleCategories = () => {
+        const result = [];
+        for (let i = 0; i < VISIBLE_COUNT; i++) {
+            result.push(CATEGORIES[(rotationIndex + i) % CATEGORIES.length]);
         }
+        return result;
+    };
+
+    // Compute positions for semi-circular arc (3 buttons)
+    const getArcPositions = () => {
+        const visible = getVisibleCategories();
+        const centerX = fabPos.x + fabSize / 2;
+        const centerY = fabPos.y + fabSize / 2;
+
+        // Arc direction: open away from nearest edge
+        // If FAB is on left, arc opens to the right (angles: -60, 0, 60)
+        // If FAB is on right, arc opens to the left (angles: 120, 180, 240)
+        const baseAngles = isOnLeft
+            ? [-55, 0, 55]   // Right-facing semi-circle
+            : [125, 180, 235]; // Left-facing semi-circle
+
+        return visible.map((cat, i) => {
+            const angleRad = (baseAngles[i] * Math.PI) / 180;
+            return {
+                cat,
+                x: centerX + ARC_RADIUS * Math.cos(angleRad) - 28,
+                y: centerY + ARC_RADIUS * Math.sin(angleRad) - 28,
+                delay: i * 60,
+            };
+        });
+    };
+
+    // Navigate spin via arrow buttons
+    const spinNext = (e) => {
+        e.stopPropagation();
+        setRotationIndex(prev => (prev + 1) % CATEGORIES.length);
+    };
+    const spinPrev = (e) => {
+        e.stopPropagation();
+        setRotationIndex(prev => (prev - 1 + CATEGORIES.length) % CATEGORIES.length);
     };
 
     // Category click
     const handleCategoryClick = (cat) => {
         setSelectedCategory(cat);
         setIsOpen(false);
-        setCarouselIndex(0);
+        setRotationIndex(0);
         setTimeout(() => amountInputRef.current?.focus(), 100);
     };
 
@@ -201,81 +231,85 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
         setAmount('');
     };
 
-    const fabSize = 60;
-    const isOnLeft = fabPos.x < window.innerWidth / 2;
+    const arcPositions = isOpen ? getArcPositions() : [];
 
-    // Carousel items: 3 visible at a time
-    const visibleCategories = CATEGORIES.slice(carouselIndex, carouselIndex + VISIBLE_COUNT);
-    const canScrollUp = carouselIndex > 0;
-    const canScrollDown = carouselIndex < CATEGORIES.length - VISIBLE_COUNT;
+    // Spin indicator dots
+    const dotCount = CATEGORIES.length;
 
     return (
         <>
             {/* Backdrop */}
-            {isOpen && <div className="widget-backdrop" onClick={() => { setIsOpen(false); setCarouselIndex(0); }} />}
+            {isOpen && <div className="widget-backdrop" onClick={() => { setIsOpen(false); setRotationIndex(0); }} />}
 
-            {/* Carousel Panel */}
+            {/* Semi-circular arc buttons */}
             {isOpen && (
                 <div
-                    className={`widget-carousel-panel ${isOnLeft ? 'panel-right' : 'panel-left'}`}
-                    style={{
-                        position: 'fixed',
-                        zIndex: 100001,
-                        top: `${fabPos.y - 20}px`,
-                        ...(isOnLeft
-                            ? { left: `${fabPos.x + fabSize + 14}px` }
-                            : { right: `${window.innerWidth - fabPos.x + 14}px` }),
-                    }}
-                    onTouchStart={handleCarouselTouchStart}
-                    onTouchEnd={handleCarouselTouchEnd}
-                    onWheel={handleWheel}
+                    className="widget-arc-container"
+                    onTouchStart={handleArcTouchStart}
+                    onTouchEnd={handleArcTouchEnd}
                 >
-                    {/* Scroll up arrow */}
-                    {canScrollUp && (
+                    {arcPositions.map(({ cat, x, y, delay }) => (
                         <button
-                            className="widget-carousel-arrow up"
-                            onClick={(e) => { e.stopPropagation(); setCarouselIndex(prev => Math.max(prev - 1, 0)); }}
+                            key={cat.name}
+                            className="widget-arc-btn"
+                            style={{
+                                position: 'fixed',
+                                left: x,
+                                top: y,
+                                animationDelay: `${delay}ms`,
+                                zIndex: 100001,
+                            }}
+                            onClick={(e) => { e.stopPropagation(); handleCategoryClick(cat); }}
                         >
-                            <i className="fas fa-chevron-up"></i>
+                            <i className={`fas ${cat.icon}`}></i>
+                            <span className="widget-arc-label">{cat.name}</span>
                         </button>
-                    )}
+                    ))}
 
-                    <div className="widget-carousel-items" ref={carouselRef}>
-                        {visibleCategories.map((cat, idx) => (
-                            <button
-                                key={cat.name}
-                                className="widget-carousel-item"
-                                onClick={(e) => { e.stopPropagation(); handleCategoryClick(cat); }}
-                                style={{ animationDelay: `${idx * 80}ms` }}
-                            >
-                                <div className="widget-carousel-icon">
-                                    <i className={`fas ${cat.icon}`}></i>
-                                </div>
-                                <span className="widget-carousel-label">{cat.name}</span>
-                            </button>
-                        ))}
-                    </div>
+                    {/* Spin arrows */}
+                    <button
+                        className="widget-spin-arrow prev"
+                        style={{
+                            position: 'fixed',
+                            left: isOnLeft ? fabPos.x + fabSize + ARC_RADIUS + 20 : fabPos.x - ARC_RADIUS - 50,
+                            top: fabPos.y + fabSize / 2 - 14,
+                            zIndex: 100001,
+                        }}
+                        onClick={spinPrev}
+                    >
+                        <i className={`fas fa-chevron-${isOnLeft ? 'up' : 'up'}`}></i>
+                    </button>
+                    <button
+                        className="widget-spin-arrow next"
+                        style={{
+                            position: 'fixed',
+                            left: isOnLeft ? fabPos.x + fabSize + ARC_RADIUS + 20 : fabPos.x - ARC_RADIUS - 50,
+                            top: fabPos.y + fabSize / 2 + 14,
+                            zIndex: 100001,
+                        }}
+                        onClick={spinNext}
+                    >
+                        <i className={`fas fa-chevron-${isOnLeft ? 'down' : 'down'}`}></i>
+                    </button>
 
-                    {/* Scroll down arrow */}
-                    {canScrollDown && (
-                        <button
-                            className="widget-carousel-arrow down"
-                            onClick={(e) => { e.stopPropagation(); setCarouselIndex(prev => Math.min(prev + 1, CATEGORIES.length - VISIBLE_COUNT)); }}
-                        >
-                            <i className="fas fa-chevron-down"></i>
-                        </button>
-                    )}
-
-                    {/* Scroll indicator dots */}
-                    <div className="widget-carousel-dots">
-                        {Array.from({ length: CATEGORIES.length - VISIBLE_COUNT + 1 }).map((_, i) => (
-                            <span key={i} className={`widget-carousel-dot ${i === carouselIndex ? 'active' : ''}`} />
+                    {/* Dot indicator */}
+                    <div
+                        className="widget-arc-dots"
+                        style={{
+                            position: 'fixed',
+                            left: isOnLeft ? fabPos.x + fabSize + ARC_RADIUS + 16 : fabPos.x - ARC_RADIUS - 55,
+                            top: fabPos.y + fabSize / 2 + 45,
+                            zIndex: 100001,
+                        }}
+                    >
+                        {Array.from({ length: dotCount }).map((_, i) => (
+                            <span key={i} className={`widget-arc-dot ${i === rotationIndex ? 'active' : ''}`} />
                         ))}
                     </div>
                 </div>
             )}
 
-            {/* Main FAB — golden glitter, red when open */}
+            {/* Main FAB */}
             <button
                 className={`widget-fab ${isOpen ? 'expanded' : ''}`}
                 style={{ left: fabPos.x, top: fabPos.y }}

@@ -12,10 +12,10 @@ export default function Header({ onHelp }) {
             {/* Subtle animated shimmer line at bottom */}
             <div className="header-shimmer"></div>
             <div className="header-inner">
-                <div className="header-logo">
+                <a href="/" className="header-logo" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <img src={SAVIFY_LOGO} alt="Savify" className="header-logo-img" />
                     <span className="header-logo-text">Savify</span>
-                </div>
+                </a>
                 <div className="header-actions">
                     {!isNative && (
                         <a href="/savify.apk" download className="install-app-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>

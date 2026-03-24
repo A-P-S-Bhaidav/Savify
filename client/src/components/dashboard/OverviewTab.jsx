@@ -1,12 +1,22 @@
 import { useState } from 'react';
 import { getCategoryIcon } from '../../utils/helpers';
 import LeaderboardModal from '../modals/LeaderboardModal';
+import TierInfoPopup from '../modals/TierInfoPopup';
 import StreakRing from './StreakRing';
 import AdBanner from './AdBanner';
 import MilestonesSection from './MilestonesSection';
 import RankBadge from './RankBadge';
 
 const AVATAR_COLORS = ['10B981', '3B82F6', '8B5CF6', 'F59E0B', 'EF4444', 'EC4899', '06B6D4', 'D946EF'];
+const FLUENT_BASE = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
+
+function getTierClass(tierName) {
+    const t = (tierName || 'Bronze').toLowerCase();
+    if (t.includes('plat')) return 'tier-platinum';
+    if (t.includes('gold')) return 'tier-gold';
+    if (t.includes('silver')) return 'tier-silver';
+    return 'tier-bronze';
+}
 
 export default function OverviewTab({
     balanceScore, currentRank, tier, currentBudget,
@@ -21,6 +31,8 @@ export default function OverviewTab({
 }) {
     const isOverBudget = budgetPct > 100;
     const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const [showTierInfo, setShowTierInfo] = useState(false);
+    const tierClass = getTierClass(tier);
 
     return (
         <>
@@ -86,7 +98,7 @@ export default function OverviewTab({
                                 <i className="fas fa-info-circle"></i>
                             </button>
                             <div className="stat-card-icon-circle">
-                                <i className="fas fa-chart-line"></i>
+                                <img src={`${FLUENT_BASE}/Travel%20and%20places/Glowing%20Star.png`} alt="" className="stat-card-3d-icon" loading="lazy" />
                             </div>
                         </div>
                     </div>
@@ -96,19 +108,22 @@ export default function OverviewTab({
                     </div>
                 </div>
 
-                {/* Current Tier Card */}
-                <div className="stat-card stat-card-white">
+                {/* Current Tier Card — Metallic */}
+                <div className={`stat-card ${tierClass}`}>
+                    <button className="tier-info-btn" onClick={() => setShowTierInfo(true)} title="Tier Information">
+                        <i className="fas fa-info-circle"></i>
+                    </button>
                     <div className="stat-card-icon-top">
-                        <i className="fas fa-trophy" style={{ color: '#D4AF37' }}></i>
+                        <img src={`${FLUENT_BASE}/Activities/Trophy.png`} alt="" className="stat-card-3d-icon" loading="lazy" />
                     </div>
                     <span className="stat-card-label">CURRENT TIER</span>
-                    <div className="stat-card-value-large" style={{ color: 'var(--color-obsidian)' }}>{tier || 'Bronze'}</div>
+                    <div className="stat-card-value-large">{tier || 'Bronze'}</div>
                 </div>
 
                 {/* Global Rank Card - Green */}
                 <div className="stat-card stat-card-rank" onClick={() => setShowLeaderboard(true)} style={{ cursor: 'pointer' }}>
                     <div className="stat-card-icon-top">
-                        <i className="fas fa-award" style={{ color: '#fff' }}></i>
+                        <img src={`${FLUENT_BASE}/Activities/1st%20Place%20Medal.png`} alt="" className="stat-card-3d-icon" loading="lazy" />
                     </div>
                     <span className="stat-card-label">GLOBAL RANK</span>
                     <div className="stat-card-value-large">
@@ -248,6 +263,12 @@ export default function OverviewTab({
                 isOpen={showLeaderboard}
                 onClose={() => setShowLeaderboard(false)}
                 currentUserName={appData?.full_name}
+            />
+
+            <TierInfoPopup
+                isOpen={showTierInfo}
+                onClose={() => setShowTierInfo(false)}
+                currentTier={tier || 'Bronze'}
             />
         </>
     );

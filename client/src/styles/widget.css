@@ -1,18 +1,35 @@
-/* ===== QUICK ADD WIDGET ===== */
+/* ===== QUICK ADD WIDGET — Semi-Circular Arc ===== */
 
 /* Golden glitter keyframes */
 @keyframes glitterShimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 @keyframes glitterSparkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.1); }
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
 }
 
-/* Main floating button — Golden glitter with glass */
+/* Main FAB — Golden glitter glass */
 .widget-fab {
     position: fixed;
     z-index: 100000;
@@ -35,21 +52,20 @@
         0 0 0 3px rgba(212, 175, 55, 0.2),
         inset 0 1px 2px rgba(255, 255, 255, 0.5),
         inset 0 -1px 2px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     transition: box-shadow 0.3s ease, transform 0.2s ease;
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
     outline: none;
     overflow: hidden;
+    transform: translateZ(0);
 }
 
 .widget-fab:active {
     cursor: grabbing;
 }
 
-/* Red glitter glass effect when expanded */
+/* Red glitter glass when expanded */
 .widget-fab.expanded {
     background:
         linear-gradient(135deg,
@@ -69,10 +85,9 @@
     inset: 0;
     border-radius: 50%;
     background:
-        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.5) 0%, transparent 30%),
-        radial-gradient(circle at 75% 30%, rgba(255,255,255,0.3) 0%, transparent 25%),
-        radial-gradient(circle at 50% 80%, rgba(255,255,255,0.25) 0%, transparent 20%),
-        radial-gradient(circle at 15% 70%, rgba(255,255,255,0.15) 0%, transparent 15%);
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.5) 0%, transparent 30%),
+        radial-gradient(circle at 75% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.25) 0%, transparent 20%);
     pointer-events: none;
     animation: glitterSparkle 2s ease-in-out infinite;
 }
@@ -83,12 +98,12 @@
     border-radius: 50%;
     object-fit: contain;
     pointer-events: none;
-    filter: brightness(1.1) drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    filter: brightness(1.1) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
     position: relative;
     z-index: 1;
 }
 
-/* Pulse ring — golden */
+/* Pulse ring */
 .widget-fab::before {
     content: '';
     position: absolute;
@@ -104,10 +119,13 @@
 }
 
 @keyframes widgetPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
         opacity: 0.6;
     }
+
     50% {
         transform: scale(1.35);
         opacity: 0;
@@ -119,169 +137,137 @@
     position: fixed;
     inset: 0;
     z-index: 99998;
-    background: rgba(0, 0, 0, 0.18);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.2);
 }
 
-/* ===== CAROUSEL PANEL ===== */
-.widget-carousel-panel {
+/* ===== SEMI-CIRCULAR ARC BUTTONS ===== */
+.widget-arc-container {
+    position: fixed;
+    inset: 0;
+    z-index: 100001;
+    pointer-events: none;
+}
+
+/* Circular category button */
+.widget-arc-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid rgba(212, 175, 55, 0.35);
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    animation: carouselPanelIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    justify-content: center;
+    gap: 2px;
+    padding: 0;
+    background:
+        linear-gradient(135deg,
+            rgba(212, 175, 55, 0.9) 0%,
+            rgba(245, 208, 96, 0.95) 40%,
+            rgba(197, 148, 46, 0.9) 100%);
+    box-shadow:
+        0 4px 20px rgba(212, 175, 55, 0.3),
+        inset 0 1px 3px rgba(255, 255, 255, 0.45),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: arcBtnIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    pointer-events: auto;
+    outline: none;
+    font-family: inherit;
+    transform: translateZ(0);
 }
 
-.widget-carousel-panel.panel-right {
-    transform-origin: left center;
+.widget-arc-btn i {
+    font-size: 1.1rem;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.widget-carousel-panel.panel-left {
-    transform-origin: right center;
+.widget-arc-label {
+    font-size: 0.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1;
 }
 
-@keyframes carouselPanelIn {
+@keyframes arcBtnIn {
     from {
         opacity: 0;
-        transform: scale(0.6);
+        transform: scale(0.3) translateZ(0);
     }
+
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateZ(0);
     }
 }
 
-/* Carousel scroll arrows */
-.widget-carousel-arrow {
-    width: 28px;
-    height: 28px;
+/* Hover — golden to green */
+.widget-arc-btn:hover {
+    background:
+        linear-gradient(135deg,
+            rgba(16, 185, 129, 0.95) 0%,
+            rgba(52, 211, 153, 1) 40%,
+            rgba(5, 150, 105, 0.95) 100%);
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow:
+        0 6px 24px rgba(16, 185, 129, 0.4),
+        inset 0 1px 3px rgba(255, 255, 255, 0.4),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+    transform: scale(1.12) translateZ(0);
+}
+
+.widget-arc-btn:active {
+    transform: scale(0.92) translateZ(0);
+}
+
+/* Spin arrows */
+.widget-spin-arrow {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     border: 1px solid rgba(212, 175, 55, 0.3);
-    background: rgba(212, 175, 55, 0.1);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(212, 175, 55, 0.15);
     color: #D4AF37;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     transition: all 0.2s ease;
     padding: 0;
     outline: none;
+    pointer-events: auto;
 }
 
-.widget-carousel-arrow:hover {
-    background: rgba(212, 175, 55, 0.25);
-    transform: scale(1.1);
+.widget-spin-arrow:hover {
+    background: rgba(212, 175, 55, 0.3);
+    transform: scale(1.15);
 }
 
-/* Carousel items container */
-.widget-carousel-items {
+/* Arc dot indicators */
+.widget-arc-dots {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    gap: 3px;
+    pointer-events: none;
 }
 
-/* ===== CAROUSEL ITEM BUTTONS — Golden glitter glass ===== */
-.widget-carousel-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 150px;
-    padding: 10px 14px;
-    border-radius: 16px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    cursor: pointer;
-    background:
-        linear-gradient(135deg,
-            rgba(212, 175, 55, 0.85) 0%,
-            rgba(245, 208, 96, 0.9) 40%,
-            rgba(197, 148, 46, 0.85) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow:
-        0 4px 16px rgba(212, 175, 55, 0.25),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    animation: carouselItemIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-    outline: none;
-    font-family: inherit;
-}
-
-@keyframes carouselItemIn {
-    from {
-        opacity: 0;
-        transform: translateX(-15px) scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
-}
-
-/* Hover — golden to green transition */
-.widget-carousel-item:hover {
-    background:
-        linear-gradient(135deg,
-            rgba(16, 185, 129, 0.9) 0%,
-            rgba(52, 211, 153, 0.95) 40%,
-            rgba(5, 150, 105, 0.9) 100%);
-    border-color: rgba(16, 185, 129, 0.4);
-    box-shadow:
-        0 6px 24px rgba(16, 185, 129, 0.35),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.1);
-    transform: translateX(4px) scale(1.03);
-}
-
-.widget-carousel-item:active {
-    transform: scale(0.96);
-}
-
-.widget-carousel-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    color: #fff;
-    flex-shrink: 0;
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.3);
-}
-
-.widget-carousel-label {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    letter-spacing: 0.3px;
-}
-
-/* Carousel dots indicator */
-.widget-carousel-dots {
-    display: flex;
-    gap: 4px;
-    margin-top: 4px;
-}
-
-.widget-carousel-dot {
-    width: 6px;
-    height: 6px;
+.widget-arc-dot {
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background: rgba(212, 175, 55, 0.25);
+    background: rgba(212, 175, 55, 0.2);
     transition: all 0.3s ease;
 }
 
-.widget-carousel-dot.active {
+.widget-arc-dot.active {
     background: #D4AF37;
     box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
-    transform: scale(1.3);
+    transform: scale(1.4);
 }
 
 /* ===== QUICK ADD POPUP ===== */
@@ -290,8 +276,6 @@
     inset: 0;
     z-index: 200000;
     background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -299,8 +283,13 @@
 }
 
 @keyframes widgetOverlayIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .widget-popup {
@@ -309,9 +298,7 @@
     padding: 1.8rem;
     width: 300px;
     max-width: 90vw;
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
     animation: widgetPopupIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
 }
@@ -321,6 +308,7 @@
         opacity: 0;
         transform: scale(0.85) translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -471,7 +459,7 @@
 }
 
 .widget-popup-add-btn.success {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: linear-gradient(135deg, #059669, #047857);
 }
 
 /* ===== WIDGET TOGGLE CARD ===== */
@@ -580,14 +568,9 @@
         height: 30px;
     }
 
-    .widget-carousel-item {
-        width: 140px;
-        padding: 9px 12px;
-    }
-
-    .widget-carousel-icon {
-        width: 34px;
-        height: 34px;
+    .widget-arc-btn {
+        width: 50px;
+        height: 50px;
     }
 
     .widget-popup {

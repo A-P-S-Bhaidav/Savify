@@ -1073,17 +1073,14 @@
 /* ===== LEADERBOARD POPUP ===== */
 .leaderboard-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 10001;
     animation: lbOverlayIn 0.2s ease;
+    padding: 1rem;
 }
 
 @keyframes lbOverlayIn {
@@ -1102,12 +1099,14 @@
     padding: 1.8rem 1.5rem 1.5rem;
     width: 340px;
     max-width: 92vw;
-    max-height: 75vh;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
     position: relative;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
     animation: lbPopupIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    margin: auto;
+    overflow-y: auto;
 }
 
 @keyframes lbPopupIn {
@@ -2077,8 +2076,7 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
+    z-index: 10000;
     display: none;
     align-items: center;
     justify-content: center;
@@ -2515,8 +2513,9 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.55);
     z-index: 900;
+    pointer-events: none;
 }
 
 .tutorial-overlay.active {
@@ -2534,9 +2533,10 @@
     padding: 1.5rem 1.5rem 1.2rem;
     max-width: 380px;
     width: 92%;
-    z-index: 1001;
+    z-index: 1100;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     border: 2px solid var(--color-gold);
+    pointer-events: auto;
 }
 
 .tutorial-agent.active {
@@ -2663,9 +2663,10 @@
 
 .tutorial-spotlight {
     position: relative;
-    z-index: 950 !important;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+    z-index: 1000 !important;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
     border-radius: 16px;
+    pointer-events: auto;
 }
 
 /* SWIPE HINT PILL */
@@ -5414,4 +5415,414 @@
     font-weight: 800;
     color: rgba(255, 255, 255, 0.3);
     letter-spacing: 2px;
+}
+
+/* ===== METALLIC TIER CARD STYLES ===== */
+.stat-card.tier-bronze {
+    background: linear-gradient(135deg, #CD7F32 0%, #A0522D 40%, #CD7F32 70%, #E8A85C 100%) !important;
+    border: 1px solid rgba(205, 127, 50, 0.4);
+    box-shadow: 0 4px 20px rgba(205, 127, 50, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    color: #fff !important;
+}
+
+.stat-card.tier-bronze .stat-card-label,
+.stat-card.tier-bronze .stat-card-value-large {
+    color: #fff !important;
+}
+
+.stat-card.tier-silver {
+    background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 30%, #D8D8D8 60%, #E8E8E8 100%) !important;
+    border: 1px solid rgba(192, 192, 192, 0.5);
+    box-shadow: 0 4px 20px rgba(192, 192, 192, 0.25), inset 0 1px 4px rgba(255, 255, 255, 0.4);
+    color: #1a1a1a !important;
+}
+
+.stat-card.tier-silver .stat-card-label,
+.stat-card.tier-silver .stat-card-value-large {
+    color: #1a1a1a !important;
+}
+
+.stat-card.tier-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #FFD700 25%, #C5942E 50%, #F5D060 75%, #D4AF37 100%) !important;
+    background-size: 200% 200% !important;
+    animation: tierGoldShimmer 4s ease-in-out infinite !important;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    box-shadow: 0 4px 24px rgba(212, 175, 55, 0.35), inset 0 1px 4px rgba(255, 255, 255, 0.45);
+    color: #fff !important;
+}
+
+.stat-card.tier-gold .stat-card-label,
+.stat-card.tier-gold .stat-card-value-large {
+    color: #fff !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card.tier-platinum {
+    background: linear-gradient(135deg, #E5E4E2 0%, #BCC6CC 20%, #E8ECF0 40%, #D0D5DA 60%, #B8C0C8 80%, #E5E4E2 100%) !important;
+    background-size: 300% 300% !important;
+    animation: tierPlatShimmer 5s ease-in-out infinite !important;
+    border: 1px solid rgba(229, 228, 226, 0.6);
+    box-shadow: 0 4px 30px rgba(229, 228, 226, 0.4), 0 0 60px rgba(229, 228, 226, 0.15), inset 0 1px 5px rgba(255, 255, 255, 0.6);
+    color: #1a1a1a !important;
+}
+
+.stat-card.tier-platinum .stat-card-label,
+.stat-card.tier-platinum .stat-card-value-large {
+    color: #1a1a1a !important;
+}
+
+@keyframes tierGoldShimmer {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes tierPlatShimmer {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Tier info button inside tier card */
+.tier-info-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.tier-info-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.1);
+}
+
+/* Tier info popup */
+.tier-info-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10002;
+    padding: 1rem;
+    animation: lbOverlayIn 0.2s ease;
+}
+
+.tier-info-popup {
+    background: var(--color-bg-elevated);
+    border-radius: 20px;
+    padding: 1.8rem;
+    width: 340px;
+    max-width: 92vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    animation: lbPopupIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tier-info-title {
+    font-family: var(--font-secondary);
+    font-size: 1.2rem;
+    color: var(--color-gold);
+    margin: 0 0 1rem;
+    text-align: center;
+}
+
+.tier-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.tier-info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tier-info-item.bronze {
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.15), rgba(205, 127, 50, 0.05));
+    border-color: rgba(205, 127, 50, 0.2);
+}
+
+.tier-info-item.silver {
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.15), rgba(192, 192, 192, 0.05));
+    border-color: rgba(192, 192, 192, 0.2);
+}
+
+.tier-info-item.gold {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+.tier-info-item.platinum {
+    background: linear-gradient(135deg, rgba(229, 228, 226, 0.15), rgba(229, 228, 226, 0.05));
+    border-color: rgba(229, 228, 226, 0.2);
+}
+
+.tier-info-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.tier-info-badge.bronze {
+    background: linear-gradient(135deg, #CD7F32, #A0522D);
+    color: #fff;
+}
+
+.tier-info-badge.silver {
+    background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+    color: #1a1a1a;
+}
+
+.tier-info-badge.gold {
+    background: linear-gradient(135deg, #D4AF37, #FFD700);
+    color: #fff;
+}
+
+.tier-info-badge.platinum {
+    background: linear-gradient(135deg, #E5E4E2, #B8C0C8);
+    color: #1a1a1a;
+}
+
+.tier-info-text h4 {
+    font-size: 0.85rem;
+    margin: 0 0 2px;
+    color: var(--color-text-primary);
+}
+
+.tier-info-text p {
+    font-size: 0.7rem;
+    margin: 0;
+    color: var(--color-stone);
+}
+
+/* ===== MILESTONES PREMIUM ===== */
+.milestones-card {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle shimmer overlay on milestones card */
+.milestones-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.04), transparent);
+    transform: skewX(-15deg);
+    animation: milestoneShimmer 6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes milestoneShimmer {
+    0% {
+        left: -150%;
+    }
+
+    50% {
+        left: 150%;
+    }
+
+    100% {
+        left: 150%;
+    }
+}
+
+.milestones-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+}
+
+.milestones-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.milestones-title i {
+    color: #D4AF37;
+}
+
+.milestones-count {
+    font-size: 0.7rem;
+    color: var(--color-stone);
+    font-weight: 600;
+}
+
+/* Premium milestone gem */
+.milestone-gem {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+}
+
+.milestone-gem.achieved {
+    animation: milestoneFloat 3s ease-in-out infinite;
+}
+
+.milestone-gem .gem-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.milestone-gem.achieved .gem-icon {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(16, 185, 129, 0.15));
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 2px 12px rgba(212, 175, 55, 0.15);
+}
+
+.milestone-gem.locked .gem-icon {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.milestone-gem .gem-icon .premium-icon {
+    font-size: 1.2rem;
+    color: #D4AF37;
+    filter: drop-shadow(0 1px 3px rgba(212, 175, 55, 0.3));
+}
+
+.milestone-gem.locked .gem-icon i {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.milestone-gem:hover {
+    transform: translateY(-4px) scale(1.05);
+}
+
+.gem-progress-badge {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--color-stone);
+    text-align: center;
+}
+
+@keyframes milestoneFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+/* Milestone 3D graphic icons */
+.milestone-3d-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+/* Progress ring for locked milestones */
+.milestone-progress-ring {
+    position: absolute;
+    inset: -2px;
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.milestone-progress-ring circle {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.milestone-progress-ring .bg {
+    stroke: rgba(255, 255, 255, 0.06);
+}
+
+.milestone-progress-ring .progress {
+    stroke: #D4AF37;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+/* ===== 3D STAT CARD ICON ===== */
+.stat-card-3d-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+    animation: statIconFloat 3s ease-in-out infinite;
+}
+
+@keyframes statIconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+/* ===== PERFORMANCE: content-visibility for off-screen sections ===== */
+.dashboard-section:not(.active) {
+    content-visibility: hidden;
 }

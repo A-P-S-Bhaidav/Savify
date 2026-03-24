@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '../../config/supabase';
 
+const FLUENT_BASE = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
+
 export default function OnboardingForm({ user, onComplete }) {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -14,27 +16,15 @@ export default function OnboardingForm({ user, onComplete }) {
 
     const colleges = ['IIT Kharagpur'];
     const halls = [
-        'Sir Ashutosh Mukherjee Hall',
-        'Azad Hall of Residence',
-        'B C Roy Hall of Residence',
-        'B R Ambedkar Hall of Residence',
-        'Gokhale Hall of Residence',
-        'Homi J Bhabha Hall of Residence',
-        'Jagadish Chandra Bose Hall of Residence',
-        'Lal Bahadur Shastri Hall of Residence',
-        'Lala Lajpat Rai Hall of Residence',
-        'Madan Mohan Malviya Hall of Residence',
-        'Meghnad Saha Hall of Residence',
-        'Mother Teresa Hall of Residence',
-        'Nehru Hall of Residence',
-        'Patel Hall of Residence',
-        'Radha Krishnan Hall of Residence',
-        'Rani Laxmibai Hall of Residence',
-        'Rajendra Prasad Hall of Residence',
-        'Sarojini Naidu - Indira Gandhi Hall of Residence',
-        'Sister Nivedita Hall of Residence',
-        'Vidyasagar Hall of Residence',
-        'Zakir Hussain Hall of Residence'
+        'Sir Ashutosh Mukherjee Hall', 'Azad Hall of Residence', 'B C Roy Hall of Residence',
+        'B R Ambedkar Hall of Residence', 'Gokhale Hall of Residence', 'Homi J Bhabha Hall of Residence',
+        'Jagadish Chandra Bose Hall of Residence', 'Lal Bahadur Shastri Hall of Residence',
+        'Lala Lajpat Rai Hall of Residence', 'Madan Mohan Malviya Hall of Residence',
+        'Meghnad Saha Hall of Residence', 'Mother Teresa Hall of Residence',
+        'Nehru Hall of Residence', 'Patel Hall of Residence', 'Radha Krishnan Hall of Residence',
+        'Rani Laxmibai Hall of Residence', 'Rajendra Prasad Hall of Residence',
+        'Sarojini Naidu - Indira Gandhi Hall of Residence', 'Sister Nivedita Hall of Residence',
+        'Vidyasagar Hall of Residence', 'Zakir Hussain Hall of Residence'
     ];
 
     const handleSubmit = async () => {
@@ -73,7 +63,7 @@ export default function OnboardingForm({ user, onComplete }) {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #f8f5f0, #FAFAF9)',
+            background: 'var(--color-bg-base, #0A0A0B)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -81,35 +71,48 @@ export default function OnboardingForm({ user, onComplete }) {
             fontFamily: 'var(--font-primary)'
         }}>
             <div style={{
-                background: 'white',
-                borderRadius: 'var(--radius-lg)',
-                padding: '3rem',
-                maxWidth: '500px',
+                background: 'var(--color-bg-elevated, #111111)',
+                borderRadius: '20px',
+                padding: '2.5rem',
+                maxWidth: '480px',
                 width: '100%',
-                boxShadow: 'var(--shadow-card)'
+                boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                border: '1px solid var(--color-border, rgba(255,255,255,0.06))'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <h1 style={{ fontFamily: 'var(--font-secondary)', fontSize: '2rem', marginBottom: '0.5rem' }}>
-                        Welcome to Savify! 🎉
+                    <img src={`${FLUENT_BASE}/Activities/Party%20Popper.png`} alt="" style={{ width: 48, height: 48, margin: '0 auto 0.8rem' }} />
+                    <h1 style={{
+                        fontFamily: 'var(--font-secondary)',
+                        fontSize: '1.8rem',
+                        marginBottom: '0.5rem',
+                        color: 'var(--color-gold, #D4AF37)'
+                    }}>
+                        Welcome to Savify!
                     </h1>
-                    <p style={{ color: 'var(--color-stone)', fontSize: '0.9rem' }}>Let's set up your profile</p>
+                    <p style={{ color: 'var(--color-stone, #78716C)', fontSize: '0.9rem' }}>Let's set up your profile</p>
+                </div>
+
+                {/* Step indicator */}
+                <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <div style={{ width: 40, height: 4, borderRadius: 4, background: step >= 1 ? '#D4AF37' : 'rgba(255,255,255,0.1)' }} />
+                    <div style={{ width: 40, height: 4, borderRadius: 4, background: step >= 2 ? '#D4AF37' : 'rgba(255,255,255,0.1)' }} />
                 </div>
 
                 {step === 1 && (
                     <>
                         <div className="form-group">
-                            <label>Full Name *</label>
+                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Full Name *</label>
                             <input type="text" value={formData.full_name} onChange={e => setFormData({ ...formData, full_name: e.target.value })} placeholder="Your full name" />
                         </div>
                         <div className="form-group">
-                            <label>College *</label>
+                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>College *</label>
                             <select value={formData.college} onChange={e => setFormData({ ...formData, college: e.target.value })}>
                                 <option value="">Select College</option>
                                 {colleges.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
                         <div className="form-group">
-                            <label>Hall of Residence</label>
+                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Hall of Residence</label>
                             <select value={formData.hall} onChange={e => setFormData({ ...formData, hall: e.target.value })}>
                                 <option value="">Select Hall (Optional)</option>
                                 {halls.map(h => <option key={h} value={h}>{h}</option>)}
@@ -124,17 +127,17 @@ export default function OnboardingForm({ user, onComplete }) {
                 {step === 2 && (
                     <>
                         <div className="form-group">
-                            <label>Native Place</label>
+                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Native Place</label>
                             <input type="text" value={formData.native_place} onChange={e => setFormData({ ...formData, native_place: e.target.value })} placeholder="Where are you from?" />
                         </div>
                         <div className="form-group">
-                            <label>Weekly Budget (₹) *</label>
+                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Weekly Budget (₹) *</label>
                             <input type="number" value={formData.weekly_spending} onChange={e => setFormData({ ...formData, weekly_spending: e.target.value })} placeholder="e.g. 2000" min="0" max="999999" />
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                             <button className="modal-btn btn-cancel" onClick={() => setStep(1)} style={{ flex: 1 }}>Back</button>
                             <button className="sexy-btn" onClick={handleSubmit} disabled={submitting} style={{ flex: 2 }}>
-                                {submitting ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : 'Start Tracking! 🚀'}
+                                {submitting ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : 'Start Tracking!'}
                             </button>
                         </div>
                     </>
