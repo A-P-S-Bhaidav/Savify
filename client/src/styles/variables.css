@@ -1,0 +1,146 @@
+/* ===== SAVIFY DARK MODE — PREMIUM DESIGN SYSTEM ===== */
+/* Inspired by Opal, Linear, Stripe. Apple Design Award tier. */
+
+:root {
+  /* ─── Core Dark Palette ─── */
+  --color-bg-base: #0A0A0A;
+  --color-bg-elevated: #111111;
+  --color-bg-surface: #1A1A1A;
+  --color-bg-hover: #222222;
+  --color-bg-input: #161616;
+
+  /* ─── Legacy aliases (so existing code doesn't break) ─── */
+  --color-obsidian: #F5F5F5;
+  --color-obsidian-light: #E4E4E7;
+  --color-ivory: #0A0A0A;
+  --color-stone: #A1A1AA;
+  --color-stone-light: #71717A;
+
+  /* ─── Text ─── */
+  --color-text-primary: #F5F5F5;
+  --color-text-secondary: #A1A1AA;
+  --color-text-muted: #71717A;
+  --color-text-inverse: #0A0A0A;
+
+  /* ─── Brand Accents ─── */
+  --color-emerald: #10B981;
+  --color-emerald-deep: #059669;
+  --color-emerald-light: rgba(16, 185, 129, 0.12);
+  --color-emerald-glow: rgba(16, 185, 129, 0.2);
+  --color-gold: #FBBF24;
+  --color-gold-light: rgba(251, 191, 36, 0.12);
+  --color-fire: #EF4444;
+  --color-fire-light: rgba(239, 68, 68, 0.12);
+  --color-rose: #f43f5e;
+  --color-blue: #3B82F6;
+  --color-purple: #8B5CF6;
+  --color-cyan: #06B6D4;
+
+  /* ─── Borders ─── */
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-hover: rgba(255, 255, 255, 0.10);
+  --color-border-active: rgba(255, 255, 255, 0.15);
+  --color-border-emerald: rgba(16, 185, 129, 0.3);
+
+  /* ─── Tier Colors ─── */
+  --color-bronze: #CD7F32;
+  --color-silver: #C0C0C0;
+  --color-platinum: #E5E4E2;
+  --color-platinum-dark: #B8B8B8;
+
+  /* ─── Fonts ─── */
+  --font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-secondary: 'Playfair Display', Georgia, serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 800;
+
+  /* ─── Typography Fluid Scaling ─── */
+  --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+  --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+  --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+  --text-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-xl: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+  --text-2xl: clamp(1.35rem, 1.2rem + 0.75vw, 1.75rem);
+  --text-3xl: clamp(1.75rem, 1.4rem + 1.75vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3.5rem);
+  --text-hero: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+
+  /* ─── Spacing Fluid Scale ─── */
+  --space-2xs: 0.125rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: clamp(1.25rem, 1vw + 1rem, 1.75rem);
+  --space-xl: clamp(1.75rem, 2vw + 1rem, 2.5rem);
+  --space-2xl: clamp(2.5rem, 3vw + 1.5rem, 4rem);
+
+  /* ─── Premium Easing Curves ─── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-fluid: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --transition-fast: 150ms var(--ease-fluid);
+  --transition-smooth: 300ms var(--ease-out-expo);
+  --transition-slow: 500ms var(--ease-out-expo);
+  --transition-bounce: 400ms var(--ease-elastic);
+  --transition-spring: 500ms var(--ease-spring);
+
+  /* ─── Premium Shadows (Dark Mode) ─── */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-emerald: 0 8px 25px -6px rgba(16, 185, 129, 0.35);
+  --shadow-glow: 0 0 30px rgba(16, 185, 129, 0.15);
+  --shadow-glow-gold: 0 0 20px rgba(251, 191, 36, 0.12);
+  --shadow-glow-soft: 0 0 60px rgba(16, 185, 129, 0.08);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  /* ─── Glassmorphism Layers ─── */
+  --glass-bg: rgba(17, 17, 17, 0.85);
+  --glass-bg-dark: rgba(10, 10, 10, 0.9);
+  --glass-bg-card: rgba(26, 26, 26, 0.6);
+  --glass-bg-modal: rgba(17, 17, 17, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-border-dark: rgba(255, 255, 255, 0.04);
+  --glass-border-hover: rgba(255, 255, 255, 0.10);
+  --glass-blur: blur(16px);
+  --glass-blur-heavy: blur(24px);
+  --glass-blur-ultra: blur(32px);
+
+  /* ─── Gradients ─── */
+  --gradient-emerald: linear-gradient(135deg, #10B981, #059669);
+  --gradient-obsidian: linear-gradient(135deg, #0A0A0A, #1a1a1a);
+  --gradient-gold: linear-gradient(135deg, #FBBF24, #F59E0B);
+  --gradient-card: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(17, 17, 17, 0.9));
+  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+  --gradient-mesh: radial-gradient(at 40% 20%, rgba(16, 185, 129, 0.06) 0px, transparent 50%),
+                   radial-gradient(at 80% 0%, rgba(251, 191, 36, 0.04) 0px, transparent 50%),
+                   radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.04) 0px, transparent 50%);
+
+  /* ─── Border Radius ─── */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-pill: 9999px;
+
+  /* ─── Z-Index Layers ─── */
+  --z-negative: -1;
+  --z-base: 1;
+  --z-elevate: 10;
+  --z-sticky: 100;
+  --z-drawer: 200;
+  --z-fab: 500;
+  --z-modal: 1000;
+  --z-popover: 2000;
+  --z-toast: 3000;
+}
