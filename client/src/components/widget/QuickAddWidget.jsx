@@ -22,7 +22,7 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     const [amount, setAmount] = useState('');
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [rotationIndex, setRotationIndex] = useState(0);
+    const [currentAngle, setCurrentAngle] = useState(0);
 
     // Position state
     const [fabPos, setFabPos] = useState(() => {
@@ -39,7 +39,8 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     const startPos = useRef({ x: 0, y: 0 });
     const amountInputRef = useRef(null);
     const rafRef = useRef(null);
-    const spinStartAngle = useRef(null);
+    const dialInteraction = useRef({ active: false, startTouchAngle: 0, startCurrentAngle: 0 });
+    const arcContainerRef = useRef(null);
 
     const isOnLeft = fabPos.x < window.innerWidth / 2;
     const fabSize = 60;
@@ -112,83 +113,109 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
         startPos.current = { ...fabPos };
     };
 
-    // Spin gesture for semi-circle rotation
+    // Smooth Dial gesture
     const handleArcTouchStart = (e) => {
         e.stopPropagation();
+        dialInteraction.current.active = true;
         const cx = fabPos.x + fabSize / 2;
         const cy = fabPos.y + fabSize / 2;
         const tx = e.touches?.[0]?.clientX ?? e.clientX;
         const ty = e.touches?.[0]?.clientY ?? e.clientY;
-        spinStartAngle.current = Math.atan2(ty - cy, tx - cx);
+        dialInteraction.current.startTouchAngle = Math.atan2(ty - cy, tx - cx) * (180 / Math.PI);
+        dialInteraction.current.startCurrentAngle = currentAngle;
     };
 
-    const handleArcTouchEnd = (e) => {
+    const handleArcTouchMove = useCallback((e) => {
+        if (!dialInteraction.current.active) return;
         e.stopPropagation();
-        if (spinStartAngle.current === null) return;
+        e.preventDefault(); // Stop page scrolling
         const cx = fabPos.x + fabSize / 2;
         const cy = fabPos.y + fabSize / 2;
-        const tx = e.changedTouches?.[0]?.clientX ?? e.clientX;
-        const ty = e.changedTouches?.[0]?.clientY ?? e.clientY;
-        const endAngle = Math.atan2(ty - cy, tx - cx);
-        const diff = endAngle - spinStartAngle.current;
-        if (Math.abs(diff) > 0.3) {
-            if (diff > 0) {
-                setRotationIndex(prev => (prev + 1) % CATEGORIES.length);
-            } else {
-                setRotationIndex(prev => (prev - 1 + CATEGORIES.length) % CATEGORIES.length);
+        const tx = e.touches?.[0]?.clientX ?? e.clientX;
+        const ty = e.touches?.[0]?.clientY ?? e.clientY;
+        const touchAngle = Math.atan2(ty - cy, tx - cx) * (180 / Math.PI);
+
+        let diff = touchAngle - dialInteraction.current.startTouchAngle;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+
+        // Dial turns opposite direction if the widget is on the right side due to math handling
+        const directionMultiplier = isOnLeft ? 1 : 1;
+        setCurrentAngle(dialInteraction.current.startCurrentAngle + diff * directionMultiplier);
+    }, [fabPos, isOnLeft]);
+
+    const handleArcTouchEnd = (e) => {
+        if (!dialInteraction.current.active) return;
+        e.stopPropagation();
+        dialInteraction.current.active = false;
+        // Snap to nearest 60 degrees for strict alignment
+        setCurrentAngle(prev => Math.round(prev / 60) * 60);
+    };
+
+    // Attach non-passive touchmove listener to block scrolling
+    useEffect(() => {
+        const el = arcContainerRef.current;
+        if (el) {
+            el.addEventListener('touchmove', handleArcTouchMove, { passive: false });
+            el.addEventListener('mousemove', handleArcTouchMove, { passive: false });
+        }
+        return () => {
+            if (el) {
+                el.removeEventListener('touchmove', handleArcTouchMove);
+                el.removeEventListener('mousemove', handleArcTouchMove);
             }
-        }
-        spinStartAngle.current = null;
-    };
+        };
+    }, [handleArcTouchMove, isOpen]);
 
-    // Get the 3 visible categories based on rotation
-    const getVisibleCategories = () => {
-        const result = [];
-        for (let i = 0; i < VISIBLE_COUNT; i++) {
-            result.push(CATEGORIES[(rotationIndex + i) % CATEGORIES.length]);
-        }
-        return result;
-    };
-
-    // Compute positions for semi-circular arc (3 buttons)
+    // Compute positions for continuous semi-circular arc
     const getArcPositions = () => {
-        const visible = getVisibleCategories();
         const centerX = fabPos.x + fabSize / 2;
         const centerY = fabPos.y + fabSize / 2;
 
-        // Arc direction: open away from nearest edge
-        // If FAB is on left, arc opens to the right (angles: -60, 0, 60)
-        // If FAB is on right, arc opens to the left (angles: 120, 180, 240)
-        const baseAngles = isOnLeft
-            ? [-55, 0, 55]   // Right-facing semi-circle
-            : [125, 180, 235]; // Left-facing semi-circle
+        const baseStartAngle = isOnLeft ? -60 : 120; // Center of the arc
+        const segmentDeg = 360 / CATEGORIES.length; // 60 degrees
 
-        return visible.map((cat, i) => {
-            const angleRad = (baseAngles[i] * Math.PI) / 180;
+        return CATEGORIES.map((cat, i) => {
+            let angleDeg = baseStartAngle + currentAngle + (i * segmentDeg);
+
+            let relativeAngle = (currentAngle + (i * segmentDeg)) % 360;
+            if (relativeAngle > 180) relativeAngle -= 360;
+            if (relativeAngle <= -180) relativeAngle += 360;
+
+            // Item is visible if it's within 90 degrees of the center of the arc
+            const isVisible = Math.abs(relativeAngle) < 85;
+            const scale = isVisible ? 1 : 0.5;
+            const opacity = isVisible ? 1 : 0;
+            const pointerEvents = isVisible ? 'auto' : 'none';
+
+            const angleRad = (angleDeg * Math.PI) / 180;
             return {
                 cat,
+                idx: i,
                 x: centerX + ARC_RADIUS * Math.cos(angleRad) - 28,
                 y: centerY + ARC_RADIUS * Math.sin(angleRad) - 28,
-                delay: i * 60,
+                scale,
+                opacity,
+                pointerEvents
             };
         });
     };
 
-    // Navigate spin via arrow buttons
+    // Navigate spin via arrow buttons (jump 60 deg)
     const spinNext = (e) => {
         e.stopPropagation();
-        setRotationIndex(prev => (prev + 1) % CATEGORIES.length);
+        setCurrentAngle(prev => prev + 60);
     };
     const spinPrev = (e) => {
         e.stopPropagation();
-        setRotationIndex(prev => (prev - 1 + CATEGORIES.length) % CATEGORIES.length);
+        setCurrentAngle(prev => prev - 60);
     };
 
     // Category click
     const handleCategoryClick = (cat) => {
         setSelectedCategory(cat);
         setIsOpen(false);
-        setRotationIndex(0);
+        setCurrentAngle(0);
         setTimeout(() => amountInputRef.current?.focus(), 100);
     };
 
@@ -239,16 +266,20 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
     return (
         <>
             {/* Backdrop */}
-            {isOpen && <div className="widget-backdrop" onClick={() => { setIsOpen(false); setRotationIndex(0); }} />}
+            {isOpen && <div className="widget-backdrop" onClick={() => { setIsOpen(false); setCurrentAngle(0); }} />}
 
             {/* Semi-circular arc buttons */}
             {isOpen && (
                 <div
+                    ref={arcContainerRef}
                     className="widget-arc-container"
+                    style={{ touchAction: 'none' }}
                     onTouchStart={handleArcTouchStart}
                     onTouchEnd={handleArcTouchEnd}
+                    onMouseDown={handleArcTouchStart}
+                    onMouseUp={handleArcTouchEnd}
                 >
-                    {arcPositions.map(({ cat, x, y, delay }) => (
+                    {arcPositions.map(({ cat, idx, x, y, scale, opacity, pointerEvents }) => (
                         <button
                             key={cat.name}
                             className="widget-arc-btn"
@@ -256,7 +287,10 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
                                 position: 'fixed',
                                 left: x,
                                 top: y,
-                                animationDelay: `${delay}ms`,
+                                transform: `scale(${scale})`,
+                                opacity: opacity,
+                                pointerEvents: pointerEvents,
+                                transition: dialInteraction.current.active ? 'none' : 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
                                 zIndex: 100001,
                             }}
                             onClick={(e) => { e.stopPropagation(); handleCategoryClick(cat); }}
@@ -302,9 +336,14 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
                             zIndex: 100001,
                         }}
                     >
-                        {Array.from({ length: dotCount }).map((_, i) => (
-                            <span key={i} className={`widget-arc-dot ${i === rotationIndex ? 'active' : ''}`} />
-                        ))}
+                        {Array.from({ length: dotCount }).map((_, i) => {
+                            // Calculate active state based on current angle
+                            let relative = (currentAngle + i * 60) % 360;
+                            if (relative < 0) relative += 360;
+                            // Active if relative angle is exactly 0, or closest to 0
+                            const isActive = relative > 330 || relative < 30;
+                            return <span key={i} className={`widget-arc-dot ${isActive ? 'active' : ''}`} />;
+                        })}
                     </div>
                 </div>
             )}

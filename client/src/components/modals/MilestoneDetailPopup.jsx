@@ -1,8 +1,10 @@
+import { createPortal } from 'react-dom';
+
 export default function MilestoneDetailPopup({ milestone, onClose }) {
     if (!milestone) return null;
     const isAchieved = milestone.achieved;
 
-    return (
+    return createPortal(
         <div className="milestone-popup-overlay" onClick={onClose}>
             <div className="milestone-popup" onClick={e => e.stopPropagation()}>
                 <button className="milestone-popup-close" onClick={onClose}>
@@ -47,6 +49,7 @@ export default function MilestoneDetailPopup({ milestone, onClose }) {
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

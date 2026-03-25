@@ -30,11 +30,34 @@ function get3DIcon(iconClass) {
     return `${FLUENT_BASE}/Objects/Gem%20Stone.png`;
 }
 
+function getDifficultyClass(m) {
+    const target = m.target || 0;
+    if (target > 0) {
+        if (target <= 3) return 'bronze';
+        if (target <= 7) return 'silver';
+        if (target <= 15) return 'gold';
+        return 'emerald';
+    }
+    const hash = String(m.id).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const mod = hash % 10;
+    if (mod < 4) return 'bronze';
+    if (mod < 7) return 'silver';
+    if (mod < 9) return 'gold';
+    return 'emerald';
+}
+
 export default function MilestonesSection({ achieved = [], locked = [] }) {
     const [selectedMilestone, setSelectedMilestone] = useState(null);
+    const [spinningId, setSpinningId] = useState(null);
 
     // Sort locked by progress descending
     const sortedLocked = [...locked].sort((a, b) => b.progress - a.progress);
+
+    const handleAchievedClick = (m) => {
+        setSpinningId(m.id);
+        setTimeout(() => setSpinningId(null), 1000); // 360deg spin takes 1s
+        setTimeout(() => setSelectedMilestone(m), 400); // Open popup partway through spin
+    };
 
     return (
         <div className="milestones-card">
@@ -45,50 +68,34 @@ export default function MilestonesSection({ achieved = [], locked = [] }) {
                 <span className="milestones-count">{achieved.length}/{achieved.length + locked.length}</span>
             </div>
 
-            <div className="milestones-list" style={{ display: 'flex', overflowX: 'auto', gap: '1rem', paddingBottom: '0.5rem', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {/* Achieved milestones — 3D icon */}
-                {achieved.map(m => (
-                    <div
-                        key={m.id}
-                        className="milestone-gem achieved"
-                        onClick={() => setSelectedMilestone(m)}
-                        style={{ minWidth: '48px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                        <div className="gem-icon">
+            <div className="milestones-list" style={{ display: 'flex', overflowX: 'auto', gap: '1rem', padding: '1rem 0.5rem', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {/* Achieved milestones — 3D Oval */}
+                {achieved.map(m => {
+                    const diffCls = getDifficultyClass(m);
+                    const isSpinning = spinningId === m.id;
+                    return (
+                        <div
+                            key={m.id}
+                            className={`milestone-oval achieved ${diffCls} ${isSpinning ? 'spin' : ''}`}
+                            onClick={() => handleAchievedClick(m)}
+                        >
                             <img src={get3DIcon(m.icon)} alt={m.title || ''} className="milestone-3d-icon" loading="lazy" />
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
 
-                {/* Locked milestones — greyed 3D icon with progress */}
+                {/* Locked milestones — Black 3D Oval with Question Mark */}
                 {sortedLocked.map(m => (
                     <div
                         key={m.id}
-                        className="milestone-gem locked"
-                        onClick={() => setSelectedMilestone(m)}
-                        style={{ minWidth: '54px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                        className="milestone-oval-container locked"
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}
                     >
-                        <div className="gem-icon">
-                            <img
-                                src={get3DIcon(m.icon)}
-                                alt={m.title || ''}
-                                className="milestone-3d-icon"
-                                loading="lazy"
-                                style={{ opacity: 0.3, filter: 'grayscale(1) drop-shadow(0 1px 2px rgba(0,0,0,0.1))' }}
-                            />
-                            {/* SVG progress ring */}
-                            <svg className="milestone-progress-ring" viewBox="0 0 48 48">
-                                <circle className="bg" cx="24" cy="24" r="22" />
-                                <circle
-                                    className="progress"
-                                    cx="24" cy="24" r="22"
-                                    strokeDasharray={`${2 * Math.PI * 22}`}
-                                    strokeDashoffset={`${2 * Math.PI * 22 * (1 - (m.progress || 0) / 100)}`}
-                                    transform="rotate(-90 24 24)"
-                                />
-                            </svg>
-                        </div>
-                        <div className="gem-progress-badge" style={{ marginTop: '4px' }}>{m.progress}%</div>
+                        <div
+                            className="milestone-oval locked"
+                            onClick={() => setSelectedMilestone(m)}
+                        ></div>
+                        <div className="gem-progress-badge" style={{ marginTop: '0px' }}>{m.progress}%</div>
                     </div>
                 ))}
 

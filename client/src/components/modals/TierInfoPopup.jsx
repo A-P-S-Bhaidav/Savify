@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const TIERS = [
     {
@@ -34,7 +35,7 @@ const TIERS = [
 export default function TierInfoPopup({ isOpen, onClose, currentTier }) {
     if (!isOpen) return null;
 
-    return (
+    return createPortal(
         <div className="tier-info-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div className="tier-info-popup">
                 <button className="leaderboard-close" onClick={onClose}>&times;</button>
@@ -62,6 +63,7 @@ export default function TierInfoPopup({ isOpen, onClose, currentTier }) {
                     ))}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

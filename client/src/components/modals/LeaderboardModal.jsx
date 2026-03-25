@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { supabase } from '../../config/supabase';
 
 export default function LeaderboardModal({ isOpen, onClose, currentUserName }) {
@@ -29,7 +30,7 @@ export default function LeaderboardModal({ isOpen, onClose, currentUserName }) {
 
     if (!isOpen) return null;
 
-    return (
+    return createPortal(
         <div className="leaderboard-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div className="leaderboard-popup">
                 <button className="leaderboard-close" onClick={onClose}>&times;</button>
@@ -73,6 +74,7 @@ export default function LeaderboardModal({ isOpen, onClose, currentUserName }) {
                     </div>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

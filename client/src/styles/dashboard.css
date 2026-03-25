@@ -2664,9 +2664,22 @@
 .tutorial-spotlight {
     position: relative;
     z-index: 1000 !important;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55), 0 0 20px 8px rgba(212, 175, 55, 0.45);
     border-radius: 16px;
     pointer-events: auto;
+    animation: tutorialGlowPulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes tutorialGlowPulse {
+    from {
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55), 0 0 15px 5px rgba(212, 175, 55, 0.4);
+        transform: scale(1);
+    }
+
+    to {
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65), 0 0 25px 12px rgba(212, 175, 55, 0.6);
+        transform: scale(1.02);
+    }
 }
 
 /* SWIPE HINT PILL */
@@ -5443,9 +5456,7 @@
 }
 
 .stat-card.tier-gold {
-    background: linear-gradient(135deg, #D4AF37 0%, #FFD700 25%, #C5942E 50%, #F5D060 75%, #D4AF37 100%) !important;
-    background-size: 200% 200% !important;
-    animation: tierGoldShimmer 4s ease-in-out infinite !important;
+    background: linear-gradient(135deg, #D4AF37 0%, #FFD700 30%, #C5942E 70%, #F5D060 100%) !important;
     border: 1px solid rgba(212, 175, 55, 0.5);
     box-shadow: 0 4px 24px rgba(212, 175, 55, 0.35), inset 0 1px 4px rgba(255, 255, 255, 0.45);
     color: #fff !important;
@@ -5458,9 +5469,7 @@
 }
 
 .stat-card.tier-platinum {
-    background: linear-gradient(135deg, #E5E4E2 0%, #BCC6CC 20%, #E8ECF0 40%, #D0D5DA 60%, #B8C0C8 80%, #E5E4E2 100%) !important;
-    background-size: 300% 300% !important;
-    animation: tierPlatShimmer 5s ease-in-out infinite !important;
+    background: linear-gradient(135deg, #E5E4E2 0%, #BCC6CC 20%, #E8ECF0 40%, #B8C0C8 80%, #E5E4E2 100%) !important;
     border: 1px solid rgba(229, 228, 226, 0.6);
     box-shadow: 0 4px 30px rgba(229, 228, 226, 0.4), 0 0 60px rgba(229, 228, 226, 0.15), inset 0 1px 5px rgba(255, 255, 255, 0.6);
     color: #1a1a1a !important;
@@ -5471,33 +5480,7 @@
     color: #1a1a1a !important;
 }
 
-@keyframes tierGoldShimmer {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-@keyframes tierPlatShimmer {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
+/* performance: removed shimmer background animation */
 
 /* Tier info button inside tier card */
 .tier-info-btn {
@@ -5704,51 +5687,89 @@
     font-weight: 600;
 }
 
-/* Premium milestone gem */
-.milestone-gem {
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    position: relative;
+/* ===== PREMIUM 3D OVAL MILESTONES ===== */
+.milestones-list {
+    perspective: 1000px;
 }
 
-.milestone-gem.achieved {
-    animation: milestoneFloat 3s ease-in-out infinite;
+.milestone-oval-container {
+    transition: transform 0.2s;
 }
 
-.milestone-gem .gem-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
+.milestone-oval-container:active {
+    transform: scale(0.95);
+}
+
+.milestone-oval {
+    width: 64px;
+    height: 84px;
+    border-radius: 50% / 40%;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3), inset 0 2px 5px rgba(255, 255, 255, 0.5);
+    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    flex-shrink: 0;
+    transform-style: preserve-3d;
     position: relative;
-    overflow: hidden;
+    margin: 0 4px;
 }
 
-.milestone-gem.achieved .gem-icon {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(16, 185, 129, 0.15));
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    box-shadow: 0 2px 12px rgba(212, 175, 55, 0.15);
+.milestone-oval:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
 }
 
-.milestone-gem.locked .gem-icon {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+/* 360 Degree spin animation */
+.milestone-oval.achieved.spin {
+    transform: rotateY(360deg) scale(1.1);
 }
 
-.milestone-gem .gem-icon .premium-icon {
-    font-size: 1.2rem;
-    color: #D4AF37;
-    filter: drop-shadow(0 1px 3px rgba(212, 175, 55, 0.3));
+/* Locked / Unearned = Black with glowing question mark */
+.milestone-oval.locked {
+    background: linear-gradient(135deg, #1f1f1f 0%, #0a0a0a 100%);
+    border: 2px solid #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
-.milestone-gem.locked .gem-icon i {
-    color: rgba(255, 255, 255, 0.2);
+.milestone-oval.locked::after {
+    content: '?';
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.15);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    font-family: var(--font-secondary);
 }
 
-.milestone-gem:hover {
-    transform: translateY(-4px) scale(1.05);
+/* Difficulty Colors */
+.milestone-oval.bronze {
+    background: linear-gradient(135deg, #CD7F32 0%, #A0522D 40%, #E8A85C 100%);
+    border: 2px solid #E8A85C;
+}
+
+.milestone-oval.silver {
+    background: linear-gradient(135deg, #E0E0E0 0%, #A8A8A8 40%, #ffffff 100%);
+    border: 2px solid #ffffff;
+}
+
+.milestone-oval.gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #C5942E 40%, #F5D060 100%);
+    border: 2px solid #F5D060;
+}
+
+.milestone-oval.emerald {
+    background: linear-gradient(135deg, #10B981 0%, #047857 40%, #34D399 100%);
+    border: 2px solid #34D399;
+}
+
+.milestone-oval .milestone-3d-icon {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+    transform: translateZ(25px);
+    /* 3d depth so it pops out */
 }
 
 .gem-progress-badge {
@@ -5756,18 +5777,6 @@
     font-weight: 700;
     color: var(--color-stone);
     text-align: center;
-}
-
-@keyframes milestoneFloat {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-3px);
-    }
 }
 
 /* Milestone 3D graphic icons */
