@@ -140,14 +140,25 @@ export default function DashboardPage() {
                     .eq('user_id', user.id)
                     .maybeSingle();
                 setLoading(false);
-                if (!app) { setShowOnboarding(true); return; }
+                let currentApp = app;
+                if (!currentApp) {
+                    currentApp = {
+                        full_name: user?.user_metadata?.full_name || 'Explorer',
+                        college: '',
+                        weekly_spending: 2000,
+                        current_weekly_spent: 0,
+                        tutorial_completed: false,
+                        onboarding_q_completed: true,
+                        is_demo: true
+                    };
+                }
 
-                setAppData(app);
-                setCurrentBudget(parseCurrency(app.weekly_spending));
-                setCurrentSpending(parseCurrency(app.current_weekly_spent));
+                setAppData(currentApp);
+                setCurrentBudget(parseCurrency(currentApp.weekly_spending));
+                setCurrentSpending(parseCurrency(currentApp.current_weekly_spent));
 
                 // Gate: show questionnaire if not completed
-                if (!app.onboarding_q_completed) {
+                if (!currentApp.onboarding_q_completed && !currentApp.is_demo) {
                     setShowQuestionnaire(true);
                     return;
                 }
@@ -180,7 +191,7 @@ export default function DashboardPage() {
 
                 if (searchParams.get('action') === 'add') setTimeout(() => openModal('expense'), 1000);
                 const tutorialDone = localStorage.getItem('savify_tutorial_done');
-                if (!tutorialDone) setTimeout(() => setShowTutorial(true), 1500);
+                if (!tutorialDone || currentApp.is_demo) setTimeout(() => setShowTutorial(true), 1500);
                 if (window.innerWidth <= 768) {
                     setShowSwipeHint(true);
                     setTimeout(() => setShowSwipeHint(false), 4000);
@@ -285,7 +296,6 @@ export default function DashboardPage() {
     const handleReplayTutorial = () => { setShowTutorial(true); };
 
     if (loading) return <div className="dashboard-loader"><div className="spinner"></div></div>;
-    if (showOnboarding) return <OnboardingForm user={user} onComplete={handleOnboardingComplete} />;
     if (showQuestionnaire) return <QuestionnaireOverlay user={user} onComplete={() => { setShowQuestionnaire(false); window.location.reload(); }} />;
     if (!appData) return null;
 
@@ -431,10 +441,23 @@ export default function DashboardPage() {
 
             {showTutorial && (
                 <TutorialOverlay
-                    onComplete={() => setShowTutorial(false)}
-                    onOpenExpense={() => openModal('expense')}
+                    onComplete={() => {
+                        setShowTutorial(false);
+                        if (appData?.is_demo) {
+                            setShowOnboarding(true);
+                        }
+                    }}
+                    onOpenExpense={() => {
+                        if (!appData?.is_demo) openModal('expense');
+                    }}
                     onSwitchTab={switchTab}
                 />
+            )}
+
+            {showOnboarding && (
+                <div style={{ position: 'fixed', inset: 0, zIndex: 100000 }}>
+                    <OnboardingForm user={user} onComplete={handleOnboardingComplete} />
+                </div>
             )}
 
             <ExpenseModal isOpen={modals.expense} onClose={() => closeModal('expense')} onSubmit={handleExpenseSubmit} />

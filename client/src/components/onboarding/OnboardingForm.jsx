@@ -63,7 +63,8 @@ export default function OnboardingForm({ user, onComplete }) {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'var(--color-bg-base, #0A0A0B)',
+            background: '#0A0A0B',
+            color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -71,7 +72,7 @@ export default function OnboardingForm({ user, onComplete }) {
             fontFamily: 'var(--font-primary)'
         }}>
             <div style={{
-                background: 'var(--color-bg-elevated, #111111)',
+                background: '#111111',
                 borderRadius: '20px',
                 padding: '2.5rem',
                 maxWidth: '480px',
@@ -94,26 +95,26 @@ export default function OnboardingForm({ user, onComplete }) {
 
                 {/* Step indicator */}
                 <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: '1.5rem' }}>
-                    <div style={{ width: 40, height: 4, borderRadius: 4, background: step >= 1 ? '#D4AF37' : 'rgba(255,255,255,0.1)' }} />
-                    <div style={{ width: 40, height: 4, borderRadius: 4, background: step >= 2 ? '#D4AF37' : 'rgba(255,255,255,0.1)' }} />
+                    <div style={{ width: 40, height: 4, borderRadius: 4, background: step >= 1 ? '#D4AF37' : '#333333' }} />
+                    <div style={{ width: 40, height: 4, borderRadius: 4, background: step >= 2 ? '#D4AF37' : '#333333' }} />
                 </div>
 
                 {step === 1 && (
                     <>
                         <div className="form-group">
-                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Full Name *</label>
-                            <input type="text" value={formData.full_name} onChange={e => setFormData({ ...formData, full_name: e.target.value })} placeholder="Your full name" />
+                            <label style={{ color: '#A1A1AA' }}>Full Name *</label>
+                            <input type="text" style={{ background: '#1a1a1a', color: '#fff', border: '1px solid #333' }} value={formData.full_name} onChange={e => setFormData({ ...formData, full_name: e.target.value })} placeholder="Your full name" />
                         </div>
                         <div className="form-group">
-                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>College *</label>
-                            <select value={formData.college} onChange={e => setFormData({ ...formData, college: e.target.value })}>
+                            <label style={{ color: '#A1A1AA' }}>College *</label>
+                            <select style={{ background: '#1a1a1a', color: '#fff', border: '1px solid #333' }} value={formData.college} onChange={e => setFormData({ ...formData, college: e.target.value })}>
                                 <option value="">Select College</option>
                                 {colleges.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
                         <div className="form-group">
-                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Hall of Residence</label>
-                            <select value={formData.hall} onChange={e => setFormData({ ...formData, hall: e.target.value })}>
+                            <label style={{ color: '#A1A1AA' }}>Hall of Residence</label>
+                            <select style={{ background: '#1a1a1a', color: '#fff', border: '1px solid #333' }} value={formData.hall} onChange={e => setFormData({ ...formData, hall: e.target.value })}>
                                 <option value="">Select Hall (Optional)</option>
                                 {halls.map(h => <option key={h} value={h}>{h}</option>)}
                             </select>
@@ -127,12 +128,12 @@ export default function OnboardingForm({ user, onComplete }) {
                 {step === 2 && (
                     <>
                         <div className="form-group">
-                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Native Place</label>
-                            <input type="text" value={formData.native_place} onChange={e => setFormData({ ...formData, native_place: e.target.value })} placeholder="Where are you from?" />
+                            <label style={{ color: '#A1A1AA' }}>Native Place</label>
+                            <input type="text" style={{ background: '#1a1a1a', color: '#fff', border: '1px solid #333' }} value={formData.native_place} onChange={e => setFormData({ ...formData, native_place: e.target.value })} placeholder="Where are you from?" />
                         </div>
                         <div className="form-group">
-                            <label style={{ color: 'var(--color-text-secondary, #A1A1AA)' }}>Weekly Budget (₹) *</label>
-                            <input type="number" value={formData.weekly_spending} onChange={e => setFormData({ ...formData, weekly_spending: e.target.value })} placeholder="e.g. 2000" min="0" max="999999" />
+                            <label style={{ color: '#A1A1AA' }}>Weekly Budget (₹) *</label>
+                            <input type="number" style={{ background: '#1a1a1a', color: '#fff', border: '1px solid #333' }} value={formData.weekly_spending} onChange={e => setFormData({ ...formData, weekly_spending: e.target.value })} placeholder="e.g. 2000" min="0" max="999999" />
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                             <button className="modal-btn btn-cancel" onClick={() => setStep(1)} style={{ flex: 1 }}>Back</button>

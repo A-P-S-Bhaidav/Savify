@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { getRank, getNextRank, getRankProgress, getAppOpens, getChosenTopRank, setChosenTopRank, RANKS } from '../../utils/ranks';
 
 export default function RankBadge({ appData, expenses = [] }) {
@@ -37,7 +38,7 @@ export default function RankBadge({ appData, expenses = [] }) {
             </div>
 
             {/* Badge Progress Popup */}
-            {showPopup && (
+            {showPopup && createPortal(
                 <div className="modal-overlay open" onClick={() => setShowPopup(false)}>
                     <div className="rank-popup" onClick={e => e.stopPropagation()}>
                         <button className="milestone-popup-close" onClick={() => setShowPopup(false)}>
@@ -67,8 +68,8 @@ export default function RankBadge({ appData, expenses = [] }) {
                                 <div className="rank-top-emoji">🔥👑🔥</div>
                                 <h3>You're at the TOP!</h3>
                                 <p className="rank-top-msg">
-                                    {rank.id === 'sigma' 
-                                        ? "You don't follow the hierarchy. You ARE the hierarchy. Main character energy. 🐺" 
+                                    {rank.id === 'sigma'
+                                        ? "You don't follow the hierarchy. You ARE the hierarchy. Main character energy. 🐺"
                                         : "You've conquered every rank. You're literally the final boss. Bow down peasants. 😤"}
                                 </p>
                                 <p className="rank-top-god">
@@ -103,9 +104,8 @@ export default function RankBadge({ appData, expenses = [] }) {
                                 {RANKS.filter(r => r.id !== 'sigma').map(r => {
                                     const isActive = (rank.id === r.id) || (rank.id === 'sigma' && r.id === 'alpha');
                                     return (
-                                        <div key={r.id} className={`rank-tier-item ${isActive ? 'active' : ''} ${
-                                            (appOpens >= r.minOpens && expenseCount >= r.minExpenses) ? 'unlocked' : 'locked'
-                                        }`}>
+                                        <div key={r.id} className={`rank-tier-item ${isActive ? 'active' : ''} ${(appOpens >= r.minOpens && expenseCount >= r.minExpenses) ? 'unlocked' : 'locked'
+                                            }`}>
                                             <img src={r.image} alt={r.name} className="rank-tier-icon" />
                                             <span className="rank-tier-name">{r.name}</span>
                                             <span className="rank-tier-req">{r.minOpens}/{r.minExpenses}</span>
@@ -115,11 +115,12 @@ export default function RankBadge({ appData, expenses = [] }) {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Alpha/Sigma Choice Popup */}
-            {showChoice && (
+            {showChoice && createPortal(
                 <div className="modal-overlay open">
                     <div className="rank-choice-popup">
                         <div className="rank-choice-header">
@@ -143,7 +144,8 @@ export default function RankBadge({ appData, expenses = [] }) {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );

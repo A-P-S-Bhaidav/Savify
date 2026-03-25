@@ -1,0 +1,108 @@
+/* ===== TRUE 3D BADGE STYLES (MULTI-LAYER EXTRUSION) ===== */
+
+.true3d-badge-container {
+    perspective: 800px;
+    width: 60px;
+    height: 70px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0 4px;
+    display: inline-block;
+}
+
+.true3d-model {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: rotateY(15deg);
+    /* Slight default angle to show 3D depth! */
+}
+
+.true3d-badge-container:active .true3d-model {
+    /* Scale down slightly when pressed */
+    transform: scale(0.9) rotateY(15deg);
+    transition: transform 0.1s;
+}
+
+.true3d-model.spin {
+    transform: rotateY(375deg);
+    /* 360 + 15 */
+}
+
+/* Layer positioning */
+.true3d-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Edges are darker to simulate 3D self-shadowing */
+.true3d-layer.edge {
+    filter: brightness(0.6) contrast(1.2);
+}
+
+.true3d-layer.back {
+    filter: brightness(0.4);
+    transform: rotateY(180deg) translateZ(4px);
+    /* Backface orientation */
+}
+
+/* Icons and Text (only on front) */
+.true3d-icon {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    transform: translateZ(10px);
+    /* Pop icon far out from the front face! */
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+.true3d-locked-mark {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.2);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-family: var(--font-secondary);
+    transform: translateZ(5px);
+}
+
+
+/* =============================================
+   SHAPE AND COLOR DEFINITIONS PER TIER
+============================================= */
+
+/* 1. Locked: Pitch Black Circle/Coin */
+.true3d-model.locked .true3d-layer {
+    background: linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 100%);
+    border-radius: 50%;
+}
+
+/* 2. Bronze: Hexagon Prism */
+.true3d-model.bronze .true3d-layer {
+    background: linear-gradient(135deg, #CD7F32 0%, #A0522D 40%, #E8A85C 100%);
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+/* 3. Silver: Octagon Prism */
+.true3d-model.silver .true3d-layer {
+    background: linear-gradient(135deg, #E8E8E8 0%, #A8A8A8 40%, #FFFFFF 100%);
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+/* 4. Gold: Thick Coin (Circle) */
+.true3d-model.gold .true3d-layer {
+    background: linear-gradient(135deg, #D4AF37 0%, #C5942E 40%, #F5D060 100%);
+    border-radius: 50%;
+}
+
+/* 5. Emerald: Rhombus / Diamond Prism */
+.true3d-model.emerald .true3d-layer {
+    background: linear-gradient(135deg, #10B981 0%, #047857 40%, #34D399 100%);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}

@@ -125,6 +125,7 @@ const TUTORIAL_SECTIONS = [
 export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab }) {
     const [step, setStep] = useState(0);
     const [visible, setVisible] = useState(true);
+    const [agentPos, setAgentPos] = useState('bottom');
 
     useEffect(() => {
         const currentStep = TUTORIAL_SECTIONS[step];
@@ -146,6 +147,16 @@ export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab
             }
             if (targetEl) {
                 targetEl.classList.add('tutorial-spotlight');
+
+                // Determine if element is in top or bottom half of the screen
+                const rect = targetEl.getBoundingClientRect();
+                const centerY = rect.top + rect.height / 2;
+                if (centerY > window.innerHeight / 2) {
+                    setAgentPos('top');
+                } else {
+                    setAgentPos('bottom');
+                }
+
                 if (currentStep.scrollTo) {
                     targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
@@ -194,10 +205,14 @@ export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab
         'Get Started': '#EF4444',
     };
 
+    const positionStyles = agentPos === 'top'
+        ? { top: '40px', bottom: 'auto' }
+        : { bottom: '80px', top: 'auto' };
+
     return (
         <>
             <div className="tutorial-overlay active" />
-            <div className="tutorial-agent active">
+            <div className="tutorial-agent active" style={positionStyles}>
                 <div className="tutorial-section-badge" style={{ background: sectionColors[currentStep.section] || '#10B981' }}>
                     {currentStep.section}
                 </div>

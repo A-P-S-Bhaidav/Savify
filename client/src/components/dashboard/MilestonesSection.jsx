@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import MilestoneDetailPopup from '../modals/MilestoneDetailPopup';
+import True3DBadge from './True3DBadge';
 
 const FLUENT_BASE = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
 
@@ -48,16 +49,9 @@ function getDifficultyClass(m) {
 
 export default function MilestonesSection({ achieved = [], locked = [] }) {
     const [selectedMilestone, setSelectedMilestone] = useState(null);
-    const [spinningId, setSpinningId] = useState(null);
 
     // Sort locked by progress descending
     const sortedLocked = [...locked].sort((a, b) => b.progress - a.progress);
-
-    const handleAchievedClick = (m) => {
-        setSpinningId(m.id);
-        setTimeout(() => setSpinningId(null), 1000); // 360deg spin takes 1s
-        setTimeout(() => setSelectedMilestone(m), 400); // Open popup partway through spin
-    };
 
     return (
         <div className="milestones-card">
@@ -69,32 +63,32 @@ export default function MilestonesSection({ achieved = [], locked = [] }) {
             </div>
 
             <div className="milestones-list" style={{ display: 'flex', overflowX: 'auto', gap: '1rem', padding: '1rem 0.5rem', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {/* Achieved milestones — 3D Oval */}
+                {/* Achieved milestones — True 3D Extrusion */}
                 {achieved.map(m => {
                     const diffCls = getDifficultyClass(m);
-                    const isSpinning = spinningId === m.id;
                     return (
-                        <div
-                            key={m.id}
-                            className={`milestone-oval achieved ${diffCls} ${isSpinning ? 'spin' : ''}`}
-                            onClick={() => handleAchievedClick(m)}
-                        >
-                            <img src={get3DIcon(m.icon)} alt={m.title || ''} className="milestone-3d-icon" loading="lazy" />
+                        <div key={m.id} className="milestone-oval-container">
+                            <True3DBadge
+                                tier={diffCls}
+                                isLocked={false}
+                                iconUrl={get3DIcon(m.icon)}
+                                onClick={() => setTimeout(() => setSelectedMilestone(m), 500)}
+                            />
                         </div>
                     );
                 })}
 
-                {/* Locked milestones — Black 3D Oval with Question Mark */}
+                {/* Locked milestones — Black 3D Base */}
                 {sortedLocked.map(m => (
                     <div
                         key={m.id}
                         className="milestone-oval-container locked"
                         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}
                     >
-                        <div
-                            className="milestone-oval locked"
+                        <True3DBadge
+                            isLocked={true}
                             onClick={() => setSelectedMilestone(m)}
-                        ></div>
+                        />
                         <div className="gem-progress-badge" style={{ marginTop: '0px' }}>{m.progress}%</div>
                     </div>
                 ))}
