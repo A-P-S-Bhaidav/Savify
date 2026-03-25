@@ -49,7 +49,7 @@
 
 .true3d-layer.back {
     filter: brightness(0.4);
-    transform: rotateY(180deg) translateZ(4px);
+    transform: rotateY(180deg) translateZ(8px);
     /* Backface orientation */
 }
 
@@ -58,7 +58,7 @@
     width: 38px;
     height: 38px;
     object-fit: contain;
-    transform: translateZ(10px);
+    transform: translateZ(14px);
     /* Pop icon far out from the front face! */
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
@@ -69,7 +69,7 @@
     color: rgba(255, 255, 255, 0.2);
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     font-family: var(--font-secondary);
-    transform: translateZ(5px);
+    transform: translateZ(10px);
 }
 
 

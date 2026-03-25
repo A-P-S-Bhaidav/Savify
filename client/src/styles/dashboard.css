@@ -2666,6 +2666,8 @@
     z-index: 1000 !important;
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85), 0 0 20px 8px rgba(212, 175, 55, 0.45) !important;
     border-radius: 16px;
+    background-color: var(--color-bg-elevated);
+    filter: brightness(1.15) !important;
     pointer-events: auto;
     animation: tutorialGlowPulse 1.5s ease-in-out infinite alternate !important;
 }

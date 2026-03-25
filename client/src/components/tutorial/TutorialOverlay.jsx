@@ -125,7 +125,7 @@ const TUTORIAL_SECTIONS = [
 export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab }) {
     const [step, setStep] = useState(0);
     const [visible, setVisible] = useState(true);
-    const [agentPos, setAgentPos] = useState('bottom');
+    const [agentPos, setAgentPos] = useState({ top: 'auto', bottom: '80px' });
 
     useEffect(() => {
         const currentStep = TUTORIAL_SECTIONS[step];
@@ -148,13 +148,15 @@ export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab
             if (targetEl) {
                 targetEl.classList.add('tutorial-spotlight');
 
-                // Determine if element is in top or bottom half of the screen
+                // Determine optimal distance
                 const rect = targetEl.getBoundingClientRect();
                 const centerY = rect.top + rect.height / 2;
-                if (centerY > window.innerHeight / 2) {
-                    setAgentPos('top');
+
+                // If element is in upper half, put agent Below it. Else put agent Above it.
+                if (centerY < window.innerHeight / 2) {
+                    setAgentPos({ top: `${rect.bottom + 20}px`, bottom: 'auto' });
                 } else {
-                    setAgentPos('bottom');
+                    setAgentPos({ bottom: `${window.innerHeight - rect.top + 20}px`, top: 'auto' });
                 }
 
                 if (currentStep.scrollTo) {
@@ -205,14 +207,10 @@ export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab
         'Get Started': '#EF4444',
     };
 
-    const positionStyles = agentPos === 'top'
-        ? { top: '40px', bottom: 'auto' }
-        : { bottom: '80px', top: 'auto' };
-
     return (
         <>
             <div className="tutorial-overlay active" />
-            <div className="tutorial-agent active" style={positionStyles}>
+            <div className="tutorial-agent active" style={agentPos}>
                 <div className="tutorial-section-badge" style={{ background: sectionColors[currentStep.section] || '#10B981' }}>
                     {currentStep.section}
                 </div>

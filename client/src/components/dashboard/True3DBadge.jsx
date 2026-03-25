@@ -28,7 +28,7 @@ export default function True3DBadge({ tier, isLocked, iconUrl, onClick }) {
 
                 {/* Extrusion Layers */}
                 {layers.map(layerIdx => {
-                    const zOffset = layerIdx - 4; // -4 to +3
+                    const zOffset = (layerIdx - 4) * 2; // -8px to +6px
                     const isFront = layerIdx === 7;
                     const isBack = layerIdx === 0;
 

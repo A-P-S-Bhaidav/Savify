@@ -141,13 +141,19 @@ export default function QuickAddWidget({ user, addExpense, currentBudget, curren
 
         // Dial turns opposite direction if the widget is on the right side due to math handling
         const directionMultiplier = isOnLeft ? 1 : 1;
-        setCurrentAngle(dialInteraction.current.startCurrentAngle + diff * directionMultiplier);
+        const targetAngle = dialInteraction.current.startCurrentAngle + diff * directionMultiplier;
+
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => {
+            setCurrentAngle(targetAngle);
+        });
     }, [fabPos, isOnLeft]);
 
     const handleArcTouchEnd = (e) => {
         if (!dialInteraction.current.active) return;
         e.stopPropagation();
         dialInteraction.current.active = false;
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
         // Snap to nearest 60 degrees for strict alignment
         setCurrentAngle(prev => Math.round(prev / 60) * 60);
     };

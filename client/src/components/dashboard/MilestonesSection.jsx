@@ -4,23 +4,37 @@ import True3DBadge from './True3DBadge';
 
 const FLUENT_BASE = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis';
 
-// Custom 3D icons per milestone type based on icon class
+// Exact mapping of all 25 specific milestones defined in useAchievements.js
 const MILESTONE_3D_MAP = {
-    'fa-fire': `${FLUENT_BASE}/Travel%20and%20places/Fire.png`,
-    'fa-piggy-bank': `${FLUENT_BASE}/Objects/Money%20Bag.png`,
-    'fa-gem': `${FLUENT_BASE}/Objects/Gem%20Stone.png`,
-    'fa-crown': `${FLUENT_BASE}/Objects/Crown.png`,
+    // Balance Score
     'fa-star': `${FLUENT_BASE}/Travel%20and%20places/Glowing%20Star.png`,
-    'fa-trophy': `${FLUENT_BASE}/Activities/Trophy.png`,
-    'fa-shield-alt': `${FLUENT_BASE}/Objects/Shield.png`,
-    'fa-bolt': `${FLUENT_BASE}/Objects/High%20Voltage.png`,
-    'fa-medal': `${FLUENT_BASE}/Activities/1st%20Place%20Medal.png`,
-    'fa-chart-line': `${FLUENT_BASE}/Objects/Chart%20Increasing.png`,
-    'fa-wallet': `${FLUENT_BASE}/Objects/Purse.png`,
+    'fa-gem': `${FLUENT_BASE}/Objects/Gem%20Stone.png`,
+    'fa-meteor': `${FLUENT_BASE}/Travel%20and%20places/Comet.png`,
+    'fa-fire': `${FLUENT_BASE}/Travel%20and%20places/Fire.png`,
+    'fa-crown': `${FLUENT_BASE}/Objects/Crown.png`,
+    // Amount Managed
     'fa-coins': `${FLUENT_BASE}/Objects/Coin.png`,
-    'fa-receipt': `${FLUENT_BASE}/Objects/Receipt.png`,
-    'fa-calendar-check': `${FLUENT_BASE}/Objects/Calendar.png`,
+    'fa-money-bill-wave': `${FLUENT_BASE}/Objects/Banknote%20with%20Dollar%20Sign.png`,
+    'fa-money-check-alt': `${FLUENT_BASE}/Objects/Credit%20Card.png`,
+    'fa-building': `${FLUENT_BASE}/Travel%20and%20places/Office%20Building.png`,
+    'fa-landmark': `${FLUENT_BASE}/Travel%20and%20places/Classical%20Building.png`,
+    // Times Added
+    'fa-seedling': `${FLUENT_BASE}/Animals%20and%20Nature/Seedling.png`,
+    'fa-chart-bar': `${FLUENT_BASE}/Objects/Bar%20Chart.png`,
+    'fa-bullseye': `${FLUENT_BASE}/Activities/Direct%20Hit.png`,
+    'fa-bolt': `${FLUENT_BASE}/Objects/High%20Voltage.png`,
     'fa-rocket': `${FLUENT_BASE}/Travel%20and%20places/Rocket.png`,
+    // Custom
+    'fa-magic': `${FLUENT_BASE}/Objects/Magic%20Wand.png`,
+    'fa-shield-alt': `${FLUENT_BASE}/Objects/Shield.png`,
+    'fa-trophy': `${FLUENT_BASE}/Activities/Trophy.png`,
+    'fa-users': `${FLUENT_BASE}/People/People%20Hugging.png`,
+    'fa-shield-check': `${FLUENT_BASE}/Objects/Locked.png`,
+    'fa-compass': `${FLUENT_BASE}/Objects/Compass.png`,
+    'fa-moon': `${FLUENT_BASE}/Travel%20and%20places/Crescent%20Moon.png`,
+    'fa-sun': `${FLUENT_BASE}/Travel%20and%20places/Sun.png`,
+    'fa-user-plus': `${FLUENT_BASE}/People/Busts%20in%20Silhouette.png`,
+    'fa-medal': `${FLUENT_BASE}/Activities/Sports%20Medal.png`,
 };
 
 function get3DIcon(iconClass) {
