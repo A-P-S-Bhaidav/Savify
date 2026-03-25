@@ -38,12 +38,14 @@ export default function True3DBadge({ tier, isLocked, iconUrl, onClick }) {
                             className={`true3d-layer ${isFront ? 'front' : ''} ${isBack ? 'back' : 'edge'}`}
                             style={{ transform: `translateZ(${zOffset}px)` }}
                         >
-                            {/* Only the front layer shows the icon or the '?' */}
-                            {isFront && !isLocked && iconUrl && (
-                                <img src={iconUrl} alt="Milestone" className="true3d-icon" />
-                            )}
-                            {isFront && isLocked && (
-                                <div className="true3d-locked-mark">?</div>
+                            {/* The front layer shows the icon continuously, grayscale if locked */}
+                            {isFront && iconUrl && (
+                                <img
+                                    src={iconUrl}
+                                    alt="Milestone"
+                                    className={`true3d-icon ${isLocked ? 'grayscale' : ''}`}
+                                    loading="lazy"
+                                />
                             )}
                         </div>
                     );

@@ -15,7 +15,7 @@ const TUTORIAL_SECTIONS = [
         message: "This toggle activates the Quick Add Widget — a floating golden button that lets you log expenses in just 2 taps. It stays on your screen and can be dragged anywhere. Spin through categories like Food, Transport, Shopping & more!",
         tip: 'Tap the golden button, pick a category from the arc, enter amount, done!',
         tab: 'overview', scrollTo: true,
-        emoji: `${FLUENT_BASE}/Objects/High%20Voltage.png`,
+        emoji: `${FLUENT_BASE}/Objects/Magic%20Wand.png`,
     },
     {
         section: 'Overview', target: '.savio-note-banner', title: "Savio's Notes",
@@ -78,7 +78,7 @@ const TUTORIAL_SECTIONS = [
         section: 'Focus', target: '.inline-focus-section', title: 'Focus Schedule',
         message: "Focus Mode lets you block distracting payment and shopping apps during specific hours. Set a time range, select apps like Amazon, Swiggy, or GPay, and Savify will remind you not to spend during those hours. Perfect for study sessions or when you're trying to avoid impulse purchases!",
         tip: 'Use Focus Mode during evenings when impulse spending peaks.',
-        tab: 'overview', scrollTo: true,
+        tab: 'focus', scrollTo: true,
         emoji: `${FLUENT_BASE}/Objects/Locked.png`,
     },
     // Analysis
@@ -125,7 +125,6 @@ const TUTORIAL_SECTIONS = [
 export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab }) {
     const [step, setStep] = useState(0);
     const [visible, setVisible] = useState(true);
-    const [agentPos, setAgentPos] = useState({ top: 'auto', bottom: '80px' });
 
     useEffect(() => {
         const currentStep = TUTORIAL_SECTIONS[step];
@@ -148,20 +147,8 @@ export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab
             if (targetEl) {
                 targetEl.classList.add('tutorial-spotlight');
 
-                // Determine optimal distance
-                const rect = targetEl.getBoundingClientRect();
-                const centerY = rect.top + rect.height / 2;
-
-                // If element is in upper half, put agent Below it. Else put agent Above it.
-                if (centerY < window.innerHeight / 2) {
-                    setAgentPos({ top: `${rect.bottom + 20}px`, bottom: 'auto' });
-                } else {
-                    setAgentPos({ bottom: `${window.innerHeight - rect.top + 20}px`, top: 'auto' });
-                }
-
-                if (currentStep.scrollTo) {
-                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                // Rely solely on auto-scrolling to bring the element to the user
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }, 400);
 
@@ -210,7 +197,7 @@ export default function TutorialOverlay({ onComplete, onOpenExpense, onSwitchTab
     return (
         <>
             <div className="tutorial-overlay active" />
-            <div className="tutorial-agent active" style={agentPos}>
+            <div className="tutorial-agent active" style={{ position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)', top: 'auto' }}>
                 <div className="tutorial-section-badge" style={{ background: sectionColors[currentStep.section] || '#10B981' }}>
                     {currentStep.section}
                 </div>
